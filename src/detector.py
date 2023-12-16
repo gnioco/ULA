@@ -120,16 +120,15 @@ def run(model: str, max_results: int, score_threshold: float,
 
         if detection_result_list:
             # print(detection_result_list)
-            diver_location_list = localize(detection_result_list[0])
+            diver_location = localize(detection_result_list[0])
             if (show):
                 current_frame = visualize(current_frame, detection_result_list[0])
                 detection_frame = current_frame
                 if detection_frame is not None:
+                    cv2.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 2)
                     cv2.namedWindow('object_detection', cv2.WINDOW_NORMAL)
                     cv2.resizeWindow('object_detection', frameWidth, frameHeight)
                     cv2.imshow('object_detection', detection_frame)
-           
-
             detection_result_list.clear()
 
 

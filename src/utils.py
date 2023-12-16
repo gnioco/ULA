@@ -79,19 +79,15 @@ def localize(image, detection_result) -> np.ndarray:
   for detection in detection_result.detections:    
         if detection.categories[0].category_name is "diver":     
             bbox = detection.bounding_box
-            diver_xC = bbox.origin_x + bbox.width/2, bbox.origin_y - bbox.height/2
-            diver_location_list.append(diver_xC)
+            diver_C = int(bbox.origin_x + bbox.width/2), int(bbox.origin_y - bbox.height/2)
+            diver_location_list.append(diver_C)
   
   # get location of the deepest detected diver
   diver_location = find_deepest_diver(diver_location_list)
   # Predict
   (x, y) = KF.predict()                
   # Update
-  (x1, y1) = KF.update(center)                    
-  center = [int(diver_location[0]), int(diver_location[1])]
+  (x1, y1) = KF.update(diver_location)                    
+  diver_location = [int(x1[0,0]), int(x1[0,1])]
 
-    # Use the orange color for high visibility.
-  cv2.rectangle(image, center[0], center[1], (0, 165, 255), 3)
-
-
-  return center
+  return diver_location
