@@ -34,7 +34,7 @@ def run(model: str, max_results: int, score_threshold: float,
 
     # Start capturing video input from the camera or file (testing)
     # cap = cv2.VideoCapture(camera_id)
-    cap = cv2.VideoCapture("Test_2.mp4")
+    cap = cv2.VideoCapture("/test/Test_2.mp4")
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
