@@ -88,10 +88,10 @@ def localize(image, detection_result) -> np.ndarray:
   (x, y) = KF.predict()                
   # Update
   (x1, y1) = KF.update(center)                    
-  center = [int(x1[0,0]), int(x1[0,1])]
+  center = [int(diver_location[0]), int(diver_location[1])]
 
     # Use the orange color for high visibility.
-  cv2.rectangle(image, start_point, end_point, (0, 165, 255), 3)
+  cv2.rectangle(image, center[0], center[1], (0, 165, 255), 3)
 
 
-  return diver_location_list
+  return center
