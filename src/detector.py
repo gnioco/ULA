@@ -9,6 +9,7 @@ from mediapipe.tasks.python import vision
 
 from multiprocessing import Process
 from multiprocessing import Queue
+import threading
 
 from utils import visualize
 from utils import localize
