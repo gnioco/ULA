@@ -19,6 +19,13 @@ from log import logger
 COUNTER, FPS = 0, 0
 START_TIME = time.time()
 
+# Set the parameters for video recording
+RC_width = 1920
+RC_height = 1080
+RC_frames = 30
+fourcc = cv2.VideoWriter_fourcc(*'mp4v') # H.264 codec
+video_output = cv2.VideoWriter('output.mp4', fourcc, RC_frames,(RC_width,RC_height))
+
 def run(model: str, max_results: int, score_threshold: float, 
         camera_id: int, width: int, height: int, show: bool, enable_motor:bool) -> None:
     """Continuously run inference on images acquired from the camera.
@@ -56,6 +63,8 @@ def run(model: str, max_results: int, score_threshold: float,
     # and the list of actual detections returned by the child process
     inputQueue = Queue(maxsize=1)
     img = None
+
+
 
     # construct a child process *indepedent* from our main process of
     # execution
@@ -150,6 +159,7 @@ def record_frame(img, inputQueue):
             # grab the frame from the input queue
             img = inputQueue.get()
             # write frame to file
+            video_output.write(img)
 
 import configparser
 

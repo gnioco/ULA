@@ -56,7 +56,7 @@ def visualize(image, detection_result) -> np.ndarray:
 
   return image
 
-def localize(image, detection_result) -> np.ndarray:
+def localize(detection_result) -> np.ndarray:
   
   """Gets locations of divers on the input image and return it.
   Args:
@@ -65,6 +65,7 @@ def localize(image, detection_result) -> np.ndarray:
     Array with diver locations.
   """
   diver_location_list = []
+  diver_location = [0,0]
   center = None
 
   # function to find deepest diver
