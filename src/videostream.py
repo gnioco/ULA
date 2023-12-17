@@ -2,18 +2,20 @@ import subprocess
 import cv2
 import numpy as np
 
-video_path = "output.mkv"  # Output video file name
-
-input_file_name = "../test/Test_2.mp4"
+video_path = 'recorded_video.mkv'  # Output video file name
 
 # We may skip the following part, if we know the resolution from advanced
-cap = cv2.VideoCapture(input_file_name)  # Open video stream for capturing (just for getting the video resolution)
+cap = cv2.VideoCapture(0)  # Open video stream for capturing (just for getting the video resolution)
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 cap.release()
 
+#process = subprocess.Popen(['ffmpeg', '-y', '-f', 'avfoundation', '-framerate', '30', '-i', '0:none', '-preset', 'fast', '-crf', '23', '-b:v', '8000k', video_path])
+
 # Start a process that record the video with ffmpeg and also pass raw video frames to stdout
-process = subprocess.Popen(['ffmpeg', '-y', '-an', '-i', input_file_name, '-preset', 'fast', '-crf', '23', '-b:v', '8000k', video_path,
+# Example for reading from a webcam, use "-rtbufsize 100M" for reducing the chance for losing frames.
+process = subprocess.Popen(['ffmpeg', '-y', '-an', '-f', 'dshow', '-rtbufsize', '100M', '-framerate', '30', '-i', 'video=Microsoft® LifeCam HD-3000', 
+                            '-preset', 'fast', '-crf', '23', '-b:v', '8000k', video_path,
                             '-f', 'rawvideo', '-pix_fmt', 'bgr24', 'pipe:'], stdout=subprocess.PIPE)
 
 
