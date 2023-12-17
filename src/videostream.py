@@ -1,37 +1,69 @@
-import subprocess
+import picamera
+import picamera.array
+import threading
+import time
 import cv2
-import numpy as np
 
-video_path = 'recorded_video.mkv'  # Output video file name
+class VideoProcessor(threading.Thread):
+    def __init__(self, resolution=(640, 480), framerate=30):
+        super(VideoProcessor, self).__init__()
+        self.resolution = resolution
+        self.framerate = framerate
+        self.recording = True
+        self.processing_thread = None
 
-# We may skip the following part, if we know the resolution from advanced
-cap = cv2.VideoCapture(0)  # Open video stream for capturing (just for getting the video resolution)
-width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-cap.release()
+        # Create a VideoCapture array to receive frames from the camera
+        self.output = picamera.array.PiRGBArray(picamera.PiCamera())
 
-#process = subprocess.Popen(['ffmpeg', '-y', '-f', 'avfoundation', '-framerate', '30', '-i', '0:none', '-preset', 'fast', '-crf', '23', '-b:v', '8000k', video_path])
+        # Create a PiCamera object
+        self.camera = picamera.PiCamera()
+        self.camera.resolution = resolution
+        self.camera.framerate = framerate
 
-# Start a process that record the video with ffmpeg and also pass raw video frames to stdout
-# Example for reading from a webcam, use "-rtbufsize 100M" for reducing the chance for losing frames.
-process = subprocess.Popen(['ffmpeg', '-y', '-an', '-f', 'dshow', '-rtbufsize', '100M', '-framerate', '30', '-i', 'video=Microsoft® LifeCam HD-3000', 
-                            '-preset', 'fast', '-crf', '23', '-b:v', '8000k', video_path,
-                            '-f', 'rawvideo', '-pix_fmt', 'bgr24', 'pipe:'], stdout=subprocess.PIPE)
+    def process_frames(self):
+        for frame in self.camera.capture_continuous(self.output, format="bgr", use_video_port=True):
+            # Access the NumPy array of the frame for processing
+            image = frame.array
 
+            # Perform any image processing here (replace with your processing code)
+            processed_image = image  # Placeholder for actual processing
 
-while True:
-    raw_frame = process.stdout.read(width*height*3)  # Read raw video frame as bytes array
+            # Display the processed image (you may want to replace this with your own display code)
+            cv2.imshow("Processed Frame", processed_image)
 
-    if len(raw_frame) != (width*height*3):        
-        break  # Break the loop in case of too few bytes were read - assume end of file (or turning off the camera).
+            # Clear the stream for the next frame
+            self.output.truncate(0)
 
-    # Transform the bytes read into a NumPy array, and reshape it to video frame dimensions
-    frame = np.frombuffer(raw_frame, np.uint8).reshape((height, width, 3))
-    cv2.imshow("Q to Quit", frame)  # Show frame for testing
-    if cv2.waitKey(1) == ord('q'):
-        break
-  
-process.stdout.close()  # Close stdout pipe
-process.wait(1)  # Wait 1 second before terminating the sub-process.
-process.terminate()
-cv2.destroyAllWindows()
+            # Break the loop if 'q' is pressed
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                self.recording = False
+                break
+
+    def run(self):
+        # Start the video processing thread
+        self.processing_thread = threading.Thread(target=self.process_frames)
+        self.processing_thread.start()
+
+        # Record video in the main thread
+        self.camera.start_recording('output.h264')
+        self.camera.wait_recording(10)  # Record for 10 seconds (you can adjust this duration)
+
+        # Stop the video recording and processing thread
+        self.camera.stop_recording()
+        self.processing_thread.join()
+
+        # Release resources
+        self.camera.close()
+        cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    video_processor = VideoProcessor()
+
+    try:
+        video_processor.start()
+
+        # Wait for the processing thread to finish
+        video_processor.join()
+
+    finally:
+        video_processor.camera.close()
