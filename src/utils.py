@@ -26,7 +26,7 @@ TEXT_COLOR = (0, 0, 0)  # black
 
 #Create KalmanFilter object KF
 #KalmanFilter(dt, u_x, u_y, std_acc, x_std_meas, y_std_meas)
-KF = KalmanFilter(0.1, 1, 1, 1, 0.1, 0.1)
+KF = KalmanFilter(0.1, 1, 1, 1, 1, 1)
 
 
 def visualize(image, detection_result) -> np.ndarray:
@@ -78,17 +78,19 @@ def localize(detection_result) -> np.ndarray:
   
   # add divers centers to the list
   for detection in detection_result.detections:    
-        if detection.categories[0].category_name is "diver":     
+        if detection.categories[0].category_name == "diver":     
             bbox = detection.bounding_box
-            diver_C = int(bbox.origin_x + bbox.width/2), int(bbox.origin_y - bbox.height/2)
+            diver_C = int(bbox.origin_x + bbox.width/2), int(bbox.origin_y + bbox.height/2)
             diver_location_list.append(diver_C)
   
   # get location of the deepest detected diver
   diver_location = find_deepest_diver(diver_location_list)
-  # Predict
-  (x, y) = KF.predict()                
-  # Update
-  (x1, y1) = KF.update(diver_location)                    
-  diver_location = [int(x1[0,0]), int(x1[0,1])]
+  
+  if diver_location is not None:
+    # Predict
+    (x, y) = KF.predict()
+    # Update
+    (x1, y1) = KF.update(diver_location)                    
+    diver_location = [int(x1[0,0]), int(x1[0,1])]
 
   return diver_location

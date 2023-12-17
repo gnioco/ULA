@@ -41,7 +41,7 @@ def run(model: str, max_results: int, score_threshold: float,
 
     # Start capturing video input from the camera or file (testing)
     # cap = cv2.VideoCapture(camera_id)
-    cap = cv2.VideoCapture("/test/Test_2.mp4")
+    cap = cv2.VideoCapture("../test/Test_2.mp4")
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
@@ -129,15 +129,17 @@ def run(model: str, max_results: int, score_threshold: float,
 
         if detection_result_list:
             # print(detection_result_list)
-            # diver_location = localize(detection_result_list[0])
+            diver_location = localize(detection_result_list[0])
+            if diver_location is None:
+                diver_location=[0,0]
             if (show):
                 current_frame = visualize(current_frame, detection_result_list[0])
                 detection_frame = current_frame
                 if detection_frame is not None:
-                    # cv2.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 2)
-                    cv2.namedWindow('object_detection', cv2.WINDOW_NORMAL)
-                    cv2.resizeWindow('object_detection', frameWidth, frameHeight)
-                    cv2.imshow('object_detection', detection_frame)
+                    cv2.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
+                    cv2.namedWindow("object_detection", cv2.WINDOW_NORMAL)
+                    cv2.resizeWindow("object_detection", frameWidth, frameHeight)
+                    cv2.imshow("object_detection", detection_frame)
             detection_result_list.clear()
 
 
@@ -173,10 +175,10 @@ if __name__ == "__main__":
     config.read(args.cfg)
     modelPath = config["detector"]["model_path"]
     camera_idx = config["detector"]["cameraId"]
-    maxResults = config["detector"].getint["maxResults"]
+    maxResults = config["detector"].getint("maxResults")
     confThreshold = config["detector"].getfloat("scoreThreshold")
-    frameWidth = config["detector"].getfloat("frameWidth")
-    frameHeight = config["detector"].getfloat("frameHeight")
+    frameWidth = config["detector"].getint("frameWidth")
+    frameHeight = config["detector"].getint("frameHeight")
     show = config["general"].getboolean("show")
     enable_motor = config["motor"].getboolean('enable')
 
