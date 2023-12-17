@@ -20,7 +20,7 @@ COUNTER, FPS = 0, 0
 START_TIME = time.time()
 
 def run(model: str, max_results: int, score_threshold: float, 
-        camera_id: int, width: int, height: int, show: bool) -> None:
+        camera_id: int, width: int, height: int, show: bool, enable_motor:bool) -> None:
     """Continuously run inference on images acquired from the camera.
 
     Args:
@@ -60,7 +60,7 @@ def run(model: str, max_results: int, score_threshold: float,
     # construct a child process *indepedent* from our main process of
     # execution
     logger.info("Starting process...")
-    p = Process(target=record_frame, args=(img, inputQueue))
+    p = Process(target=record_frame, args=(img, inputQueue,))
     p.daemon = True
     p.start()
     time.sleep(10)
@@ -120,12 +120,12 @@ def run(model: str, max_results: int, score_threshold: float,
 
         if detection_result_list:
             # print(detection_result_list)
-            diver_location = localize(detection_result_list[0])
+            # diver_location = localize(detection_result_list[0])
             if (show):
                 current_frame = visualize(current_frame, detection_result_list[0])
                 detection_frame = current_frame
                 if detection_frame is not None:
-                    cv2.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 2)
+                    # cv2.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 2)
                     cv2.namedWindow('object_detection', cv2.WINDOW_NORMAL)
                     cv2.resizeWindow('object_detection', frameWidth, frameHeight)
                     cv2.imshow('object_detection', detection_frame)
@@ -163,14 +163,12 @@ if __name__ == "__main__":
     config.read(args.cfg)
     modelPath = config["detector"]["model_path"]
     camera_idx = config["detector"]["cameraId"]
-    maxResults = config["detector"]["maxResults"]
+    maxResults = config["detector"].getint["maxResults"]
     confThreshold = config["detector"].getfloat("scoreThreshold")
     frameWidth = config["detector"].getfloat("frameWidth")
     frameHeight = config["detector"].getfloat("frameHeight")
     show = config["general"].getboolean("show")
     enable_motor = config["motor"].getboolean('enable')
 
-    run(modelPath, maxResults, confThreshold, 
-        camera_idx, frameWidth, frameHeight, 
-        show, enable_motor)
+    run(modelPath, maxResults, confThreshold, camera_idx, frameWidth, frameHeight, show, enable_motor)
     
