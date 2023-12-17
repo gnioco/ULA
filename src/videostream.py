@@ -1,98 +1,35 @@
-#!/usr/bin/env python3
-
-import multiprocessing
-import numpy as np
-import ctypes
+import subprocess
 import cv2
+import numpy as np
 
-class StreamVideos:
-    def __init__(self, path, n_consumers):
-        """
-        path is the path to the video:
-        n_consumers is the number of tasks to which we will be sreaming this.
-        """
-        self._path = path
+video_path = "output.mkv"  # Output video file name
 
-        self._event = multiprocessing.Event()
+input_file_name = "../test/Test_2.mp4"
 
-        self._barrier = multiprocessing.Barrier(n_consumers + 1, self._reset_event)
+# We may skip the following part, if we know the resolution from advanced
+cap = cv2.VideoCapture(input_file_name)  # Open video stream for capturing (just for getting the video resolution)
+width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+cap.release()
 
-        # Discover how large a framesize is by getting the first frame
-        cap = cv2.VideoCapture(self._path)
-        ret, frame = cap.read()
-        if ret:
-            self._shape = frame.shape
-            frame_size = self._shape[0] * self._shape[1] * self._shape[2]
-            self._arr = multiprocessing.RawArray(ctypes.c_ubyte, frame_size)
-        else:
-            self._arr = None
-        cap.release()
-
-    def _reset_event(self):
-        self._event.clear()
-
-    def start_streaming(self):
-        cap = cv2.VideoCapture(self._path)
-
-        while True:
-            self._barrier.wait()
-            ret, frame = cap.read()
-            if not ret:
-                # No more readable frames:
-                break
-
-            # Store frame into shared array:
-            temp = np.frombuffer(self._arr, dtype=frame.dtype)
-            temp[:] = frame.flatten(order='C')
-
-            self._event.set()
-
-        cap.release()
-        self._arr = None
-        self._event.set()
-
-    def get_next_frame(self):
-        # Tell producer that this consumer is through with the previous frame:
-        self._barrier.wait()
-        # Wait for next frame to be read by the producer:
-        self._event.wait()
-        if self._arr is None:
-            return None
-
-        # Return shared array as a numpy array:
-        return np.ctypeslib.as_array(self._arr).reshape(self._shape)
-
-def consumer(producer, id):
-    frame_name = f'Frame - {id}'
-    while True:
-        frame = producer.get_next_frame()
-        if frame is None:
-            break
-        cv2.imshow(frame_name, frame)
-        cv2.waitKey(1)
-
-    cv2.destroyAllWindows()
+# Start a process that record the video with ffmpeg and also pass raw video frames to stdout
+process = subprocess.Popen(['ffmpeg', '-y', '-an', '-i', input_file_name, '-preset', 'fast', '-crf', '23', '-b:v', '8000k', video_path,
+                            '-f', 'rawvideo', '-pix_fmt', 'bgr24', 'pipe:'], stdout=subprocess.PIPE)
 
 
-def main():
-    producer = StreamVideos(0, 2)
+while True:
+    raw_frame = process.stdout.read(width*height*3)  # Read raw video frame as bytes array
 
-    consumer1 = multiprocessing.Process(target=consumer, args=(producer, 1))
-    consumer1.start()
-    consumer2 = multiprocessing.Process(target=consumer, args=(producer, 2))
-    consumer2.start()
+    if len(raw_frame) != (width*height*3):        
+        break  # Break the loop in case of too few bytes were read - assume end of file (or turning off the camera).
 
-    """
-    # Run as a child process:
-    producer_process = multiprocessing.Process(target=producer.start_streaming)
-    producer_process.start()
-    producer_process.join()
-    """
-    # Run in main process:
-    producer.start_streaming()
-
-    consumer1.join()
-    consumer2.join()
-
-if __name__ == '__main__':
-    main()
+    # Transform the bytes read into a NumPy array, and reshape it to video frame dimensions
+    frame = np.frombuffer(raw_frame, np.uint8).reshape((height, width, 3))
+    cv2.imshow("Q to Quit", frame)  # Show frame for testing
+    if cv2.waitKey(1) == ord('q'):
+        break
+  
+process.stdout.close()  # Close stdout pipe
+process.wait(1)  # Wait 1 second before terminating the sub-process.
+process.terminate()
+cv2.destroyAllWindows()
