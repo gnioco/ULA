@@ -10,9 +10,9 @@ import socketserver
 from http import server
 from threading import Condition
 
-from picamera2 import Picamera2
-from picamera2.encoders import JpegEncoder
-from picamera2.outputs import FileOutput
+from picamera2 import Picamera2, Preview
+from picamera2.encoders import JpegEncoder, H264Encoder, Quality
+from picamera2.outputs import FileOutput, FfmpegOutput
 
 PAGE = """\
 <html>
@@ -85,6 +85,13 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 picam2 = Picamera2()
 picam2.configure(picam2.create_video_configuration(main={"size": (640, 480)}))
+
+
+picam2.start_preview(Preview.QTGL)
+picam2.start()
+
+output_rec = FfmpegOutput("test.mp4", audio=False)
+
 output = StreamingOutput()
 picam2.start_recording(JpegEncoder(), FileOutput(output))
 
@@ -92,5 +99,7 @@ try:
     address = ('', 8000)
     server = StreamingServer(address, StreamingHandler)
     server.serve_forever()
+    picam2.start_recording(H264Encoder(), output_rec, quality=Quality.HIGH)
+
 finally:
     picam2.stop_recording()

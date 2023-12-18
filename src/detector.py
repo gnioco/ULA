@@ -7,8 +7,6 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-from multiprocessing import Process
-from multiprocessing import Queue
 import threading
 
 from utils import visualize
@@ -59,21 +57,7 @@ def run(model: str, max_results: int, score_threshold: float,
     detection_frame = None
     detection_result_list = []
 
-
-    # initialize the input queue (frames)
-    # and the list of actual detections returned by the child process
-    inputQueue = Queue(maxsize=1)
-    img = None
-
-
-
-    # construct a child process *indepedent* from our main process of
-    # execution
-    logger.info("Starting process...")
-    p = Process(target=record_frame, args=(img, inputQueue,))
-    p.daemon = True
-    p.start()
-    time.sleep(10)
+ 
     logger.info("Starting capture...")
     
     def save_result(result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
