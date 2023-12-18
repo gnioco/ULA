@@ -5,6 +5,7 @@
 # Note: needs simplejpeg to be installed (pip3 install simplejpeg).
 
 import io
+import time
 import logging
 import socketserver
 from http import server
@@ -36,8 +37,6 @@ class StreamingOutput(io.BufferedIOBase):
         with self.condition:
             self.frame = buf
             self.condition.notify_all()
-
-
 class StreamingHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
@@ -76,30 +75,38 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         else:
             self.send_error(404)
             self.end_headers()
-
-
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
 
 picam2 = Picamera2()
-picam2.configure(picam2.create_video_configuration(main={"size": (640, 480)}))
+# video_config = picam2.create_video_configuration(main={"size": (1280, 720), "format": "RGB888"},
+#                                                lores={"size": (640, 480), "format": "YUV420"})
 
+video_config = picam2.create_video_configuration(main={"size": (1280, 720)},
+                                                 lores={"size": (640, 480)})
+picam2.configure(video_config)
 
 picam2.start_preview(Preview.QTGL)
-picam2.start()
+# picam2.start()
 
-output_rec = FfmpegOutput("test.mp4", audio=False)
+encoder_rec = H264Encoder()
+encoder_stream = JpegEncoder()
 
-output = StreamingOutput()
-picam2.start_recording(JpegEncoder(), FileOutput(output))
+output_rec = FfmpegOutput("test_123.mp4", audio=False)
+output_stream = StreamingOutput()
+
+picam2.start_recording(encoder_stream, FileOutput(output_stream), name="lores")
 
 try:
     address = ('', 8000)
     server = StreamingServer(address, StreamingHandler)
     server.serve_forever()
-    picam2.start_recording(H264Encoder(), output_rec, quality=Quality.HIGH)
+
+    picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
+    time.sleep(5)
+    picam2.stop_encoder(encoder_rec)
 
 finally:
     picam2.stop_recording()
