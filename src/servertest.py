@@ -95,9 +95,9 @@ encoder_rec = H264Encoder()
 encoder_stream = MJPEGEncoder()
 
 output_rec = FfmpegOutput("test_123.mp4", audio=False)
-output_stream = StreamingOutput()
+output = StreamingOutput()
 
-picam2.start_recording(encoder_stream, FileOutput(output_stream), name="lores")
+picam2.start_recording(encoder_stream, FileOutput(output), name="lores")
 
 try:
     address = ('', 8000)
