@@ -7,8 +7,6 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-import threading
-
 from utils import visualize
 from utils import localize
 from PIL import Image
@@ -88,13 +86,6 @@ def run(model: str, max_results: int, score_threshold: float,
                 'ERROR: Unable to read from webcam. Please verify your webcam settings.'
             )
 
-        # Capture frame-by-frame
-        # frame = frame.array
-        img = Image.fromarray(frame)
-        # if the input queue *is* empty, give the current frame to
-        # record_frame
-        if inputQueue.empty():
-            inputQueue.put(frame)
 
         image = cv2.flip(frame, 1)
 
@@ -133,21 +124,10 @@ def run(model: str, max_results: int, score_threshold: float,
         if cv2.waitKey(1) == 27:
             break
 
-    p.join()
     detector.close()
     video_output.release()
     cap.release()
     cv2.destroyAllWindows()
-
-
-def record_frame(img, inputQueue):
-    while True:
-        # check to see if there is a frame in our input queue
-        if not inputQueue.empty():
-            # grab the frame from the input queue
-            img = inputQueue.get()
-            # write frame to file
-            video_output.write(img)
 
 import configparser
 
