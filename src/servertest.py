@@ -17,7 +17,6 @@ from picamera2 import Picamera2, Preview
 from picamera2.encoders import JpegEncoder, H264Encoder, Quality
 from picamera2.outputs import FileOutput, FfmpegOutput
 
-import cv2
 
 
 PAGE = """\
