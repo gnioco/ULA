@@ -90,10 +90,10 @@ picam2.configure(picam2.create_video_configuration(main={"size": (640, 480)}))
 encoder_rec = H264Encoder()
 encoder_stream = JpegEncoder()
 
-output_stream = StreamingOutput()
+output = StreamingOutput()
 output_rec = FfmpegOutput("test.mp4", audio=False)
 
-picam2.start_recording(encoder_stream, FileOutput(output_stream))
+picam2.start_recording(encoder_stream, FileOutput(output))
 
 try:
     address = ('', 8000)
