@@ -124,12 +124,11 @@ t.start()
 
 print("HEREEE s33333")
 
-while True:
-    
+flag = "1"
+while flag != "0":    
     # Stop the program if the ESC key is pressed.
-    if cv2.waitKey(1) == 27:
-        output_rec.stop()
-        picam2.stop_encoder()
-        break
-
+    flag = input("to break loop enter '0': ")
+    
+output_rec.stop()
+picam2.stop_encoder()
 print("recording stopp2")
