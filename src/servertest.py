@@ -12,7 +12,7 @@ from http import server
 from threading import Condition
 
 from picamera2 import Picamera2, Preview
-from picamera2.encoders import JpegEncoder, H264Encoder, Quality
+from picamera2.encoders import MJPEGEncoder, H264Encoder, Quality
 from picamera2.outputs import FileOutput, FfmpegOutput
 
 PAGE = """\
@@ -89,10 +89,10 @@ video_config = picam2.create_video_configuration(main={"size": (1280, 720)},
 picam2.configure(video_config)
 
 picam2.start_preview(Preview.QTGL)
-# picam2.start()
+picam2.start()
 
 encoder_rec = H264Encoder()
-encoder_stream = JpegEncoder()
+encoder_stream = MJPEGEncoder()
 
 output_rec = FfmpegOutput("test_123.mp4", audio=False)
 output_stream = StreamingOutput()
