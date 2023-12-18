@@ -96,7 +96,7 @@ encoder_stream = JpegEncoder()
 output = StreamingOutput()
 output_rec = FfmpegOutput("test.mp4", audio=False)
 
-picam2.start_recording(encoder_stream, FileOutput(output), name="lores")
+picam2.start_recording(encoder_stream, FileOutput(output))
 picam2.start_recording(encoder_rec, 'test1.h264')
 
 address = ('', 8000)
