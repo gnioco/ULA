@@ -108,8 +108,6 @@ try:
     picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
     time.sleep(5)
     picam2.stop_encoder(encoder_rec)
-except:
-  print("Something went wrong")
-# Stop the program if the ESC key is pressed.
-picam2.stop_recording()
+finally:
+    picam2.stop_recording()
     
