@@ -97,7 +97,7 @@ encoder_stream = JpegEncoder()
 output_rec = FfmpegOutput("test_123.mp4", audio=False)
 output = StreamingOutput()
 
-picam2.start_recording(encoder_stream, FileOutput(output), name="lores")
+picam2.start_recording(encoder_stream, FileOutput(output))
 
 try:
     address = ('', 8000)
