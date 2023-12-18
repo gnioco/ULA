@@ -10,6 +10,7 @@ import logging
 import socketserver
 from http import server
 from threading import Condition
+import cv2
 
 from picamera2 import Picamera2, Preview
 from picamera2.encoders import JpegEncoder, H264Encoder, Quality
@@ -107,6 +108,8 @@ try:
  #   picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
  #   time.sleep(5)
  #   picam2.stop_encoder(encoder_rec)
-finally:
-    picam2.stop_recording()
+except:
+  print("Something went wrong")
+if cv2.waitKey(1) == 27:
+            picam2.stop_recording()
     
