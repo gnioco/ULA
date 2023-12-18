@@ -97,15 +97,18 @@ encoder_stream = JpegEncoder()
 output = StreamingOutput()
 output_rec = FfmpegOutput("test.mp4", audio=False)
 
-picam2.start_recording(encoder_stream, FileOutput(output))
-picam2.start_recording(encoder_rec, output_rec, quality=Quality.HIGH)
+# picam2.start_recording(encoder_stream, FileOutput(output))
+picam2.start_encoder(encoder_stream, FileOutput(output))
+
+# picam2.start_recording(encoder_rec, output_rec, quality=Quality.HIGH)
+picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
+picam2.start()
 
 address = ('', 8000)
 server = StreamingServer(address, StreamingHandler)
 server.serve_forever()
- 
+print("HEREEE stopp2")
 time.sleep(10)
 output_rec.stop()
-picam2.stop_recording()
-picam2.stop_recording()
+picam2.stop_encoder()
 print("recording stopp2")
