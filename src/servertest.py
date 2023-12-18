@@ -104,10 +104,12 @@ picam2.start_encoder(encoder_stream, FileOutput(output))
 picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
 picam2.start()
 
+print("HEREEE 222222")
+
 address = ('', 8000)
 server = StreamingServer(address, StreamingHandler)
 server.serve_forever()
-print("HEREEE stopp2")
+print("HEREEE s33333")
 time.sleep(10)
 output_rec.stop()
 picam2.stop_encoder()
