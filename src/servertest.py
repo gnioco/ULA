@@ -8,6 +8,8 @@ import io
 import time
 import logging
 import socketserver
+import threading
+
 from http import server
 from threading import Condition
 
@@ -106,9 +108,18 @@ picam2.start()
 
 print("HEREEE 222222")
 
-address = ('', 8000)
-server = StreamingServer(address, StreamingHandler)
-server.serve_forever()
+
+def server():
+    address = ('', 8000)
+    server = StreamingServer(address, StreamingHandler)
+    server.serve_forever()
+
+
+t = threading.Thread(target=server)
+t.setDaemon(True)
+t.start()
+
+
 print("HEREEE s33333")
 time.sleep(10)
 output_rec.stop()
