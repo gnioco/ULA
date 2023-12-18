@@ -17,6 +17,9 @@ from picamera2 import Picamera2, Preview
 from picamera2.encoders import JpegEncoder, H264Encoder, Quality
 from picamera2.outputs import FileOutput, FfmpegOutput
 
+import cv2
+
+
 PAGE = """\
 <html>
 <head>
@@ -99,8 +102,8 @@ encoder_stream = JpegEncoder()
 output = StreamingOutput()
 output_rec = FfmpegOutput("test.mp4", audio=False)
 
-# picam2.start_recording(encoder_stream, FileOutput(output))
-picam2.start_encoder(encoder_stream, FileOutput(output))
+picam2.start_recording(encoder_stream, FileOutput(output))
+# picam2.start_encoder(encoder_stream, FileOutput(output))
 
 # picam2.start_recording(encoder_rec, output_rec, quality=Quality.HIGH)
 picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
@@ -119,9 +122,14 @@ t = threading.Thread(target=server)
 t.setDaemon(True)
 t.start()
 
-
 print("HEREEE s33333")
-time.sleep(10)
-output_rec.stop()
-picam2.stop_encoder()
+
+while True:
+    
+    # Stop the program if the ESC key is pressed.
+    if cv2.waitKey(1) == 27:
+        output_rec.stop()
+        picam2.stop_encoder()
+        break
+
 print("recording stopp2")
