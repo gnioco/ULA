@@ -111,6 +111,5 @@ try:
 except:
   print("Something went wrong")
 # Stop the program if the ESC key is pressed.
-if cv2.waitKey(1) == 27:    
-    picam2.stop_recording()
+picam2.stop_recording()
     
