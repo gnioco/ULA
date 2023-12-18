@@ -85,8 +85,8 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 
 picam2 = Picamera2()
-video_config = picam2.create_video_configuration(main={"size": (1280, 720), "format": "RGB888"},
-                                                 lores={"size": (640, 480), "format": "YUV420"})
+video_config = picam2.create_video_configuration(main={"size": (1280, 720)},
+                                                 lores={"size": (640, 480)})
 picam2.configure(video_config)
 
 
