@@ -89,8 +89,6 @@ video_config = picam2.create_video_configuration(main={"size": (1280, 720)},
                                                  lores={"size": (640, 480)})
 picam2.configure(video_config)
 
-picam2.start_preview(Preview.QTGL)
-picam2.start()
 
 encoder_rec = H264Encoder()
 encoder_stream = JpegEncoder()
@@ -108,8 +106,12 @@ try:
  #   picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
  #   time.sleep(5)
  #   picam2.stop_encoder(encoder_rec)
-except:
-  print("Something went wrong")
-if cv2.waitKey(1) == 27:
-            picam2.stop_recording()
-    
+finally:
+  picam2.stop_recording()
+
+while True:
+    im = picam2.capture_array()
+
+    cv2.imshow("Camera", im)
+    if cv2.waitKey(1) == 27:
+        break
