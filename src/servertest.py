@@ -12,7 +12,7 @@ from http import server
 from threading import Condition
 
 from picamera2 import Picamera2, Preview
-from picamera2.encoders import JpegEncoder, H264Encoder
+from picamera2.encoders import JpegEncoder, H264Encoder, Quality
 from picamera2.outputs import FileOutput, FfmpegOutput
 
 PAGE = """\
