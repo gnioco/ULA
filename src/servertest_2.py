@@ -1,108 +1,73 @@
 #!/usr/bin/python3
-
-# These two are only needed for the demo code below the FrameServer class.
+import socket
+import threading
 import time
-from threading import Condition, Thread
+
+import numpy as np
 
 from picamera2 import Picamera2
+from picamera2.encoders import H264Encoder
+from picamera2.outputs import CircularOutput, FileOutput
 
-
-class FrameServer:
-    def __init__(self, picam2, stream='main'):
-        """A simple class that can serve up frames from one of the Picamera2's configured streams to multiple other threads.
-
-        Pass in the Picamera2 object and the name of the stream for which you want
-        to serve up frames.
-        """
-        self._picam2 = picam2
-        self._stream = stream
-        self._array = None
-        self._condition = Condition()
-        self._running = True
-        self._count = 0
-        self._thread = Thread(target=self._thread_func, daemon=True)
-
-    @property
-    def count(self):
-        """A count of the number of frames received."""
-        return self._count
-
-    def start(self):
-        """To start the FrameServer, you will also need to start the Picamera2 object."""
-        self._thread.start()
-
-    def stop(self):
-        """To stop the FrameServer
-
-        First stop any client threads (that might be
-        blocked in wait_for_frame), then call this stop method. Don't stop the
-        Picamera2 object until the FrameServer has been stopped.
-        """
-        self._running = False
-        self._thread.join()
-
-    def _thread_func(self):
-        while self._running:
-            array = self._picam2.capture_array(self._stream)
-            self._count += 1
-            with self._condition:
-                self._array = array
-                self._condition.notify_all()
-
-    def wait_for_frame(self, previous=None):
-        """You may optionally pass in the previous frame that you got last time you called this function.
-
-        This will guarantee that you don't get duplicate frames
-        returned in the event of spurious wake-ups, and it may even return more
-        quickly in the case where a new frame has already arrived.
-        """
-        with self._condition:
-            if previous is not None and self._array is not previous:
-                return self._array
-            while True:
-                self._condition.wait()
-                if self._array is not previous:
-                    return self._array
-
-
-# Below here is just demo code that uses the class:
-
-def thread1_func():
-    global thread1_count
-    while not thread_abort:
-        _ = server.wait_for_frame()
-        thread1_count += 1
-
-
-def thread2_func():
-    global thread2_count
-    frame = None
-    while not thread_abort:
-        frame = server.wait_for_frame(frame)
-        thread2_count += 1
-
-
-thread_abort = False
-thread1_count = 0
-thread2_count = 0
-thread1 = Thread(target=thread1_func)
-thread2 = Thread(target=thread2_func)
-
+lsize = (320, 240)
 picam2 = Picamera2()
-server = FrameServer(picam2)
-thread1.start()
-thread2.start()
-server.start()
+video_config = picam2.create_video_configuration(main={"size": (1280, 720), "format": "RGB888"},
+                                                 lores={"size": lsize, "format": "YUV420"})
+picam2.configure(video_config)
+picam2.start_preview()
+encoder = H264Encoder(1000000, repeat=True)
+circ = CircularOutput()
+encoder.output = [circ]
+picam2.encoders = encoder
 picam2.start()
+picam2.start_encoder()
 
-time.sleep(5)
+w, h = lsize
+prev = None
+encoding = False
+ltime = 0
 
-thread_abort = True
-thread1.join()
-thread2.join()
-server.stop()
-picam2.stop()
 
-print("Thread1 received", thread1_count, "frames")
-print("Thread2 received", thread2_count, "frames")
-print("Server received", server.count, "frames")
+def server():
+    global circ, picam2
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.bind(("0.0.0.0", 10001))
+        sock.listen()
+        while tup := sock.accept():
+            event = threading.Event()
+            conn, addr = tup
+            stream = conn.makefile("wb")
+            filestream = FileOutput(stream)
+            filestream.start()
+            encoder.output = [circ, filestream]
+            filestream.connectiondead = lambda _: event.set()  # noqa
+            event.wait()
+
+
+t = threading.Thread(target=server)
+t.setDaemon(True)
+t.start()
+
+while True:
+    cur = picam2.capture_buffer("lores")
+    cur = cur[:w * h].reshape(h, w)
+    if prev is not None:
+        # Measure pixels differences between current and
+        # previous frame
+        mse = np.square(np.subtract(cur, prev)).mean()
+        if mse > 7:
+            if not encoding:
+                epoch = int(time.time())
+                circ.fileoutput = f"{epoch}.h264"
+                circ.start()
+                encoding = True
+                print("New Motion", mse)
+            ltime = time.time()
+        else:
+            if encoding and time.time() - ltime > 5.0:
+                circ.stop()
+                encoding = False
+    prev = cur
+
+picam2.stop_encoder()
