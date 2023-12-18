@@ -5,6 +5,7 @@
 # Note: needs simplejpeg to be installed (pip3 install simplejpeg).
 
 import io
+import cv2
 import time
 import logging
 import socketserver
@@ -107,6 +108,9 @@ try:
     picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
     time.sleep(5)
     picam2.stop_encoder(encoder_rec)
-
-finally:
+except:
+  print("Something went wrong")
+# Stop the program if the ESC key is pressed.
+if cv2.waitKey(1) == 27:    
     picam2.stop_recording()
+    
