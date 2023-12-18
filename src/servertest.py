@@ -85,7 +85,10 @@ class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
 
 
 picam2 = Picamera2()
-picam2.configure(picam2.create_video_configuration(main={"size": (640, 480)}))
+video_config = picam2.create_video_configuration(main={"size": (1280, 720), "format": "RGB888"},
+                                                 lores={"size": (640, 480), "format": "YUV420"})
+picam2.configure(video_config)
+
 
 encoder_rec = H264Encoder()
 encoder_stream = JpegEncoder()
@@ -93,13 +96,13 @@ encoder_stream = JpegEncoder()
 output = StreamingOutput()
 output_rec = FfmpegOutput("test.mp4", audio=False)
 
-picam2.start_recording(encoder_stream, FileOutput(output))
+picam2.start_recording(encoder_stream, FileOutput(output), name="lores")
+picam2.start_recording(encoder_rec, FileOutput(output_rec))
 
-try:
-    address = ('', 8000)
-    server = StreamingServer(address, StreamingHandler)
-    server.serve_forever()
-finally:
-    picam2.start_recording(encoder_rec, FileOutput(output_rec))
-    time.sleep(10)
-    picam2.stop_recording()
+address = ('', 8000)
+server = StreamingServer(address, StreamingHandler)
+server.serve_forever()
+
+ 
+time.sleep(10)
+picam2.stop_recording()
