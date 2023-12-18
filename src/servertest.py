@@ -42,7 +42,6 @@ class StreamingOutput(io.BufferedIOBase):
             self.frame = buf
             self.condition.notify_all()
 
-
 class StreamingHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
@@ -82,7 +81,6 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.send_error(404)
             self.end_headers()
 
-
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
@@ -104,9 +102,9 @@ output_rec = FfmpegOutput("test.mp4", audio=False)
 picam2.start_recording(encoder_stream, FileOutput(output))
 # picam2.start_encoder(encoder_stream, FileOutput(output))
 
-# picam2.start_recording(encoder_rec, output_rec, quality=Quality.HIGH)
-picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
-picam2.start()
+picam2.start_recording(encoder_rec, output_rec, quality=Quality.HIGH)
+# picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
+# picam2.start()
 
 print("HEREEE 222222")
 
@@ -127,7 +125,8 @@ flag = "1"
 while flag != "0":    
     # Stop the program if the ESC key is pressed.
     flag = input("to break loop enter '0': ")
-    
-output_rec.stop()
-picam2.stop_encoder()
+
+picam2.stop_recording()    
+# output_rec.stop()
+# picam2.stop_encoder()
 print("recording stopp2")
