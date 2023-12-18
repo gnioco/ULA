@@ -5,7 +5,6 @@
 # Note: needs simplejpeg to be installed (pip3 install simplejpeg).
 
 import io
-import cv2
 import time
 import logging
 import socketserver
