@@ -105,4 +105,5 @@ server = StreamingServer(address, StreamingHandler)
 server.serve_forever()
  
 time.sleep(10)
+output_rec.stop()
 picam2.stop_recording()
