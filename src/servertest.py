@@ -5,15 +5,13 @@
 # Note: needs simplejpeg to be installed (pip3 install simplejpeg).
 
 import io
-import time
 import logging
 import socketserver
 from http import server
 from threading import Condition
-import cv2
 
-from picamera2 import Picamera2, Preview
-from picamera2.encoders import JpegEncoder, H264Encoder, Quality
+from picamera2 import Picamera2
+from picamera2.encoders import JpegEncoder, H264Encoder
 from picamera2.outputs import FileOutput, FfmpegOutput
 
 PAGE = """\
@@ -38,6 +36,8 @@ class StreamingOutput(io.BufferedIOBase):
         with self.condition:
             self.frame = buf
             self.condition.notify_all()
+
+
 class StreamingHandler(server.BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == '/':
@@ -76,44 +76,29 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
         else:
             self.send_error(404)
             self.end_headers()
+
+
 class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
     allow_reuse_address = True
     daemon_threads = True
 
 
 picam2 = Picamera2()
-# video_config = picam2.create_video_configuration(main={"size": (1280, 720), "format": "RGB888"},
-#                                                lores={"size": (640, 480), "format": "YUV420"})
-
-video_config = picam2.create_video_configuration(main={"size": (1280, 720)},
-                                                 lores={"size": (640, 480)})
-picam2.configure(video_config)
-
+picam2.configure(picam2.create_video_configuration(main={"size": (640, 480)}))
 
 encoder_rec = H264Encoder()
 encoder_stream = JpegEncoder()
 
-output_rec = FfmpegOutput("test_123.mp4", audio=False)
-output = StreamingOutput()
+output_stream = StreamingOutput()
+output_rec = FfmpegOutput("test.mp4", audio=False)
 
-picam2.start_recording(encoder_stream, FileOutput(output))
+picam2.start_recording(encoder_stream, FileOutput(output_stream))
 
 try:
     address = ('', 8000)
     server = StreamingServer(address, StreamingHandler)
     server.serve_forever()
-
-    picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
-    time.sleep(5)
-    picam2.stop_encoder(encoder_rec)
-except:
-    print("ERROOOORRRR")
-  
-
-while True:
-    im = picam2.capture_array()
-
-    cv2.imshow("Camera", im)
-    if cv2.waitKey(1) == 27:
-        picam2.stop_recording()
-        break
+finally:
+    picam2.start_recording(encoder_rec, FileOutput(output_rec))
+    time.sleep(10)
+    picam2.stop_recording()
