@@ -195,7 +195,6 @@ def run(model: str, max_results: int, score_threshold: float,
     picam2.stop_recording() 
     print("recording stopp2")
     detector.close()
-    cap.release()
     cv2.destroyAllWindows()
 
 import configparser
@@ -236,7 +235,15 @@ if __name__ == "__main__":
     # picam2.start_encoder(encoder_stream, FileOutput(output))
 
     picam2.start_recording(encoder_rec, output_rec, quality=Quality.HIGH)
+    def server():
+        address = ('', 8000)
+        server = StreamingServer(address, StreamingHandler)
+        server.serve_forever()
 
+
+    t = threading.Thread(target=server)
+    t.setDaemon(True)
+    t.start()
 
     run(modelPath, maxResults, confThreshold, camera_idx, frameWidth, frameHeight, show, enable_motor)
     
