@@ -105,9 +105,9 @@ try:
     server = StreamingServer(address, StreamingHandler)
     server.serve_forever()
 
-    picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
-    time.sleep(5)
-    picam2.stop_encoder(encoder_rec)
+ #   picam2.start_encoder(encoder_rec, output_rec, quality=Quality.HIGH)
+ #   time.sleep(5)
+ #   picam2.stop_encoder(encoder_rec)
 finally:
     picam2.stop_recording()
     
