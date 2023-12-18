@@ -11,7 +11,7 @@ import socketserver
 from http import server
 from threading import Condition
 
-from picamera2 import Picamera2
+from picamera2 import Picamera2, Preview
 from picamera2.encoders import JpegEncoder, H264Encoder
 from picamera2.outputs import FileOutput, FfmpegOutput
 
@@ -89,6 +89,7 @@ video_config = picam2.create_video_configuration(main={"size": (1280, 720)},
                                                  lores={"size": (640, 480)})
 picam2.configure(video_config)
 
+picam2.start_preview(Preview.QTGL)
 
 encoder_rec = H264Encoder()
 encoder_stream = JpegEncoder()
@@ -97,12 +98,11 @@ output = StreamingOutput()
 output_rec = FfmpegOutput("test.mp4", audio=False)
 
 picam2.start_recording(encoder_stream, FileOutput(output))
-picam2.start_recording(encoder_rec, 'test1.h264')
+picam2.start_recording(encoder_rec, output_rec, quality=Quality.HIGH)
 
 address = ('', 8000)
 server = StreamingServer(address, StreamingHandler)
 server.serve_forever()
-
  
 time.sleep(10)
 picam2.stop_recording()
