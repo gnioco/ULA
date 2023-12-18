@@ -1,92 +1,108 @@
-import logging
-import socketserver
-from http import server
+#!/usr/bin/python3
+
+# These two are only needed for the demo code below the FrameServer class.
+import time
 from threading import Condition, Thread
-import simplejpeg
-import cv2
 
 from picamera2 import Picamera2
-from picamera2.outputs import FileOutput
 
-PAGE = """\
-<html>
-<head>
-<title>picamera2 MJPEG streaming demo</title>
-</head>
-<body>
-<h1>Picamera2 MJPEG Streaming Demo</h1>
-<img src="stream.mjpg" width="640" height="480" />
-</body>
-</html>
-"""
 
-def mjpeg_encode():
-    global mjpeg_frame
-    while not mjpeg_abort:
-        yuv = picam2.capture_array("lores")
-        rgb = cv2.cvtColor(yuv, cv2.COLOR_YUV420p2RGB)
-        buf = simplejpeg.encode_jpeg(rgb, quality=80, colorspace='BGR', colorsubsampling='420') 
-        with mjpeg_condition:
-            mjpeg_frame = buf
-            mjpeg_condition.notify_all()
+class FrameServer:
+    def __init__(self, picam2, stream='main'):
+        """A simple class that can serve up frames from one of the Picamera2's configured streams to multiple other threads.
 
-class StreamingHandler(server.BaseHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == '/':
-            self.send_response(301)
-            self.send_header('Location', '/index.html')
-            self.end_headers()
-        elif self.path == '/index.html':
-            content = PAGE.encode('utf-8')
-            self.send_response(200)
-            self.send_header('Content-Type', 'text/html')
-            self.send_header('Content-Length', len(content))
-            self.end_headers()
-            self.wfile.write(content)
-        elif self.path == '/stream.mjpg':
-            self.send_response(200)
-            self.send_header('Age', 0)
-            self.send_header('Cache-Control', 'no-cache, private')
-            self.send_header('Pragma', 'no-cache')
-            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=FRAME')
-            self.end_headers()
-            try:
-                while True:
-                    with mjpeg_condition:
-                        mjpeg_condition.wait()
-                        frame = mjpeg_frame
-                    self.wfile.write(b'--FRAME\r\n')
-                    self.send_header('Content-Type', 'image/jpeg')
-                    self.send_header('Content-Length', len(frame))
-                    self.end_headers()
-                    self.wfile.write(frame)
-                    self.wfile.write(b'\r\n')
-            except Exception as e:
-                logging.warning(
-                    'Removed streaming client %s: %s',
-                    self.client_address, str(e))
-        else:
-            self.send_error(404)
-            self.end_headers()
+        Pass in the Picamera2 object and the name of the stream for which you want
+        to serve up frames.
+        """
+        self._picam2 = picam2
+        self._stream = stream
+        self._array = None
+        self._condition = Condition()
+        self._running = True
+        self._count = 0
+        self._thread = Thread(target=self._thread_func, daemon=True)
 
-class StreamingServer(socketserver.ThreadingMixIn, server.HTTPServer):
-    allow_reuse_address = True
-    daemon_threads = True
+    @property
+    def count(self):
+        """A count of the number of frames received."""
+        return self._count
+
+    def start(self):
+        """To start the FrameServer, you will also need to start the Picamera2 object."""
+        self._thread.start()
+
+    def stop(self):
+        """To stop the FrameServer
+
+        First stop any client threads (that might be
+        blocked in wait_for_frame), then call this stop method. Don't stop the
+        Picamera2 object until the FrameServer has been stopped.
+        """
+        self._running = False
+        self._thread.join()
+
+    def _thread_func(self):
+        while self._running:
+            array = self._picam2.capture_array(self._stream)
+            self._count += 1
+            with self._condition:
+                self._array = array
+                self._condition.notify_all()
+
+    def wait_for_frame(self, previous=None):
+        """You may optionally pass in the previous frame that you got last time you called this function.
+
+        This will guarantee that you don't get duplicate frames
+        returned in the event of spurious wake-ups, and it may even return more
+        quickly in the case where a new frame has already arrived.
+        """
+        with self._condition:
+            if previous is not None and self._array is not previous:
+                return self._array
+            while True:
+                self._condition.wait()
+                if self._array is not previous:
+                    return self._array
+
+
+# Below here is just demo code that uses the class:
+
+def thread1_func():
+    global thread1_count
+    while not thread_abort:
+        _ = server.wait_for_frame()
+        thread1_count += 1
+
+
+def thread2_func():
+    global thread2_count
+    frame = None
+    while not thread_abort:
+        frame = server.wait_for_frame(frame)
+        thread2_count += 1
+
+
+thread_abort = False
+thread1_count = 0
+thread2_count = 0
+thread1 = Thread(target=thread1_func)
+thread2 = Thread(target=thread2_func)
 
 picam2 = Picamera2()
-picam2.configure(picam2.create_video_configuration(main={"size": (640, 480)}, lores={}))
+server = FrameServer(picam2)
+thread1.start()
+thread2.start()
+server.start()
 picam2.start()
 
-mjpeg_abort = False
-mjpeg_frame = None
-mjpeg_condition = Condition()
-mjpeg_thread = Thread(target=mjpeg_encode, daemon=True)
-mjpeg_thread.start()
+time.sleep(5)
 
-try:
-    address = ('', 8000)
-    server = StreamingServer(address, StreamingHandler)
-    server.serve_forever()
-finally:
-    mjpeg_abort = True
-    mjpeg_thread.join()
+thread_abort = True
+thread1.join()
+thread2.join()
+server.stop()
+picam2.stop()
+
+print("Thread1 received", thread1_count, "frames")
+print("Thread2 received", thread2_count, "frames")
+print("Server received", server.count, "frames")
