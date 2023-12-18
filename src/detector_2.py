@@ -115,7 +115,7 @@ def run(model: str, max_results: int, score_threshold: float,
     # Start capturing video input from the camera or file (testing)
 
 
-    logger.info(f"[info] W, H, FPS\n{frameWidth}, {frameHeight}, {cap.get(cv2.CAP_PROP_FPS)}")
+    # logger.info(f"[info] W, H, FPS\n{frameWidth}, {frameHeight}, {cap.get(cv2.CAP_PROP_FPS)}")
 
     # Visualization parameters
     row_size = 50  # pixels
