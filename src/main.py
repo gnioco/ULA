@@ -13,6 +13,12 @@ Ula main stateflow
 7# ULA: Follow the diver (detect + track)
 8# once ULA back to 5m, stop motors - wait there. Loop to 4#
 
+
+Packets
+========
+
+
+
 Usage
 -----
 run.py
@@ -22,20 +28,17 @@ Keys
 ----
 ESC - exit
 '''
-
+from bar30 import Bar30
+from UDPserver import UDP
 
 class App:
     def __init__(self):
-        self.track_len = 10
-        self.detect_interval = 5
-        self.tracks = []
-        self.cam = cv.VideoCapture("Test_2.mp4")
-        self.frame_idx = 0
+        UDP()
+        Bar30() # initialize depth sensor Bar30
+
     def run():
-        # Stop the program if the ESC key is pressed.
-        ch = cv.waitKey(1)
-        if ch == 27:
-            break
+        # 
+        Bar30.read()
 
 def main():
     # establish connection client (ula) and server (AP)
