@@ -81,7 +81,8 @@ def run(model: str, max_results: int, score_threshold: float,
 
     # Continuously capture images from the camera and run inference
     while True:
-        frame = picam2.capture_array()
+        frame = cap.read()
+        # frame = picam2.capture_array()
 
         image = cv2.flip(frame, 1)
 
