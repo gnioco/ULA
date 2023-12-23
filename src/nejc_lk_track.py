@@ -57,8 +57,6 @@ detection_result_list = []
 
 
 
-
-
 class App:
     def __init__(self):
         self.track_len = 10
@@ -148,7 +146,7 @@ class App:
                         if detection_frame is not None:
                             cv.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
                             cv.namedWindow("object_detection", cv.WINDOW_NORMAL)
-                            cv.resizeWindow("object_detection", frameWidth, frameHeight)
+                            cv.resizeWindow("object_detection", width, height)
                             cv.imshow("object_detection", detection_frame)
                     detection_result_list.clear()
                 
