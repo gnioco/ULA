@@ -87,11 +87,11 @@ class App:
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
-        cap = cv.VideoCapture("Test_2.mp4")
+        
         # Continuously capture images from the camera and run inference
         while True:
             # frame = picam2.capture_array()
-            _ret, frame = cap.read()
+            _ret, frame = self.cam.read()
             frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             vis = frame.copy()
             
