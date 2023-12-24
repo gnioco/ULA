@@ -121,18 +121,16 @@ class App:
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
                         font_size, text_color, font_thickness, cv.LINE_AA)
 
-            if self.diver_location is not None:
+            if len(self.tracks) > 0:
                 img0, img1 = self.prev_gray, frame
-                # p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
-                print(self.diver_location)
-                p0 = np.float32([self.diver_location[0], self.diver_location[1]]).reshape(-1, 1, 2)
+                p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
+                p0 = [(self.diver_location[0], self.diver_location[1])]
                 p1, _st, _err = cv.calcOpticalFlowPyrLK(img0, img1, p0, None, **lk_params)
                 p0r, _st, _err = cv.calcOpticalFlowPyrLK(img1, img0, p1, None, **lk_params)
                 d = abs(p0-p0r).reshape(-1, 2).max(-1)
                 good = d < 1
                 new_tracks = []
-                print
-                for tr, (x, y), good_flag in zip(self.diver_location, p1.reshape(-1, 2), good):
+                for tr, (x, y), good_flag in zip(self.tracks, p1.reshape(-1, 2), good):
                     if not good_flag:
                         continue
                     tr.append((x, y))
@@ -140,7 +138,7 @@ class App:
                         del tr[0]
                     new_tracks.append(tr)
                     cv.circle(frame, (int(x), int(y)), 10, (0, 255, 0), -1)
-                self.diver_location = new_tracks
+                self.tracks = new_tracks
                 print('x',x)
                 print('y',y)
                 
@@ -156,9 +154,14 @@ class App:
 
                 if detection_result_list:
                     # print(detection_result_list)
-                    self.diver_location = localize(detection_result_list[0])
+                    diver_location = localize(detection_result_list[0])
 
-                    cv.circle(frame, [self.diver_location[0], self.diver_location[1]], 10, (0, 255, 0), 5)
+                    if diver_location is None:
+                        diver_location=[0,0]
+
+                    if len(self.tracks) == 0:
+                        self.tracks.append([(diver_location[0], diver_location[1])])
+                    cv.circle(frame, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
                     
 
                     detection_result_list.clear()
