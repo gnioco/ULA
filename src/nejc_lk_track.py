@@ -139,7 +139,7 @@ class App:
                         del tr[0]
                     new_tracks.append(tr)
                     cv.circle(frame, (int(x), int(y)), 10, (0, 255, 0), -1)
-                self.tracks = new_tracks
+                self.diver_location = new_tracks
                 print('x',x)
                 print('y',y)
                 
