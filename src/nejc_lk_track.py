@@ -110,7 +110,6 @@ class App:
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
-        diver_location=[0,0]
         
         # Continuously capture images from the camera and run inference
         while True:
@@ -119,12 +118,12 @@ class App:
             # frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             # vis = frame.copy()
             
-            image = cv.flip(frame, 1)
+            # frame = cv.flip(frame, 1)
 
             # Show the FPS
             fps_text = 'FPS = {:.1f}'.format(self.FPS)
             text_location = (left_margin, row_size)
-            current_frame = image
+            current_frame = frame
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
                         font_size, text_color, font_thickness, cv.LINE_AA)
 
@@ -143,7 +142,7 @@ class App:
                     if len(tr) > self.track_len:
                         del tr[0]
                     new_tracks.append(tr)
-                    cv.circle(image, (int(x), int(y)), 10, (0, 255, 0), -1)
+                    cv.circle(frame, (int(x), int(y)), 10, (0, 255, 0), -1)
                 self.tracks = new_tracks
                 print('x',x)
                 print('y',y)
@@ -152,7 +151,7 @@ class App:
             if self.frame_idx % self.detect_interval == 0:
 
                 # Convert the image from BGR to RGB as required by the TFLite model.
-                rgb_image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+                rgb_image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
 
                 # Run object detection using the model.
@@ -164,10 +163,10 @@ class App:
 
                     if diver_location is None:
                         diver_location=[0,0]
-                        
+
                     if len(self.tracks) == 0:
                         self.tracks.append([(diver_location[0], diver_location[1])])
-                    cv.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
+                    cv.circle(frame, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
                     
 
                     detection_result_list.clear()
@@ -177,7 +176,7 @@ class App:
 
             self.frame_idx += 1
             self.prev_gray = frame
-            cv.imshow('lk_track', image)
+            cv.imshow('lk_track', frame)
             #  (self.show):
             #    current_frame = visualize(current_frame, detection_result_list[0])
             #    detection_frame = current_frame
