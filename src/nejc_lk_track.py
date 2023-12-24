@@ -83,7 +83,7 @@ class App:
         self.cam = cv.VideoCapture("../ula/test/Test_2.mp4")
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
         self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, self.frameHeight)
-        self.frame_idx = 0
+        self.frame_idx = 1
 
         self.fps = FPS().start()
         self.FPS = 0
@@ -121,7 +121,7 @@ class App:
                         font_size, text_color, font_thickness, cv.LINE_AA)
             
             # tukaj najdemo tocke ki bi jih radi sledili
-            if self.frame_idx % self.detect_interval == 0:
+            if self.frame_idx % int(self.detect_interval)-1 == 0:
                 centroids = np.zeros([1, 1, 2], dtype=np.float32)
                 # Convert the image from BGR to RGB as required by the TFLite model.
                 rgb_image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
