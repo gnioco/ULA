@@ -143,7 +143,7 @@ class App:
                     detection_result_list.clear()
 
             else: # track an object only if it has been detected
-                print(centroids)
+                
                 if centroids.sum() != 0: # centroid was initialized as zeros
                     print("bbb")
                     next1, st, error = cv.calcOpticalFlowPyrLK(self.prev_frame, frame,
@@ -161,7 +161,10 @@ class App:
                         # specific values for 2 points to be same the object
                         if 0.20 < distance < 20:
                             frame = cv.circle(frame, (int(a), int(b)), 15, (0,0,255), -1)
+                    print(centroids)
                     centroids = good_new.reshape(-1, 1, 2)
+                    print("later")
+                    print(centroids)
               
                                 
                         
