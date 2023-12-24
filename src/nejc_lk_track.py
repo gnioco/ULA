@@ -80,7 +80,7 @@ class App:
         camera_id: int, width: int, height: int, show: bool, enable_motor:bool):
         print(model)
         # Initialize the object detection model
-        base_options = python.BaseOptions(model_asset_path=model)
+        base_options = python.BaseOptions(model_asset_path=self.model)
         options = vision.ObjectDetectorOptions(base_options=base_options,
                                                 running_mode=vision.RunningMode.LIVE_STREAM,
                                                 max_results=max_results, score_threshold=score_threshold,
