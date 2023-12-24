@@ -136,6 +136,7 @@ class App:
                     if len(tr) > self.track_len:
                         del tr[0]
                     new_tracks.append(tr)
+                    print("here")
                     cv.circle(frame, (int(x), int(y)), 10, (0, 255, 0), -1)
                 self.tracks = new_tracks
                 print('x',x)
