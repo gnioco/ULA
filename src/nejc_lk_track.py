@@ -55,7 +55,7 @@ fps_avg_frame_count = 10
 detection_frame = None
 detection_result_list = []
 
-
+global FPS, COUNTER, START_TIME
 
 class App:
     def __init__(self):
@@ -82,7 +82,7 @@ class App:
         self.frame_idx = 0
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
-        global FPS, COUNTER, START_TIME
+        
 
         # Calculate the FPS
         if COUNTER % fps_avg_frame_count == 0:
