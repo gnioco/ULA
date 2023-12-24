@@ -161,11 +161,14 @@ class App:
                 if detection_result_list:
                     # print(detection_result_list)
                     diver_location = localize(detection_result_list[0])
+
+                    if diver_location is None:
+                        diver_location=[0,0]
+                        
                     if len(self.tracks) == 0:
                         self.tracks.append([(diver_location[0], diver_location[1])])
                     cv.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
-                    if diver_location is None:
-                        diver_location=[0,0]
+                    
 
                     detection_result_list.clear()
                 
