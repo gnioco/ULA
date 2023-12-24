@@ -108,6 +108,7 @@ class App:
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
+        diver_location=[0,0]
         
         # Continuously capture images from the camera and run inference
         while True:
@@ -157,7 +158,6 @@ class App:
 
                 if detection_result_list:
                     # print(detection_result_list)
-                    diver_location=[0,0]
                     if diver_location is not None:
                         diver_location = localize(detection_result_list[0])
                     if (self.show):
