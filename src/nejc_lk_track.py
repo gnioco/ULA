@@ -113,7 +113,7 @@ class App:
             # frame = cv.flip(frame, 1)
 
             # Show the FPS
-            fps_text = self.fps.fps()
+            fps_text = 'FPS = {:.1f}'.format(self.fps.fps())
             text_location = (left_margin, row_size)
             current_frame = frame
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
