@@ -87,7 +87,7 @@ class App:
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
-        print(model)
+        print(self.model)
         # Continuously capture images from the camera and run inference
         while True:
             # frame = picam2.capture_array()
