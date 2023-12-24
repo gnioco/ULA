@@ -155,9 +155,9 @@ class App:
 
                 if detection_result_list:
                     # print(detection_result_list)
-                    diver_location = localize(detection_result_list[0])
+                    self.diver_location = localize(detection_result_list[0])
 
-                    cv.circle(frame, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
+                    cv.circle(frame, [self.diver_location[0], self.diver_location[1]], 10, (0, 255, 0), 5)
                     
 
                     detection_result_list.clear()
