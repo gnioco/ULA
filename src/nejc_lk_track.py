@@ -59,6 +59,22 @@ detection_result_list = []
 
 class App:
     def __init__(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--cfg', help='path to cfg file', default="config.cfg")
+        config = configparser.ConfigParser()
+
+        # Load the configuration file
+        args = parser.parse_args()
+        config.read(args.cfg)
+        modelPath = config["detector"]["model_path"]
+        camera_idx = config["detector"]["cameraId"]
+        maxResults = config["detector"].getint("maxResults")
+        confThreshold = config["detector"].getfloat("scoreThreshold")
+        frameWidth = config["detector"].getint("frameWidth")
+        frameHeight = config["detector"].getint("frameHeight")
+        show = config["general"].getboolean("show")
+        enable_motor = config["motor"].getboolean('enable')
+
         self.track_len = 10
         self.detect_interval = 5
         self.tracks = []
@@ -76,14 +92,13 @@ class App:
         detection_result_list.append(result)
         COUNTER += 1
 
-    def run(self, model: str, max_results: int, score_threshold: float, 
-        camera_id: int, width: int, height: int, show: bool, enable_motor:bool):
-        print(model)
+    def run(self):
+        print(self.model)
         # Initialize the object detection model
         base_options = python.BaseOptions(model_asset_path=self.model)
         options = vision.ObjectDetectorOptions(base_options=base_options,
                                                 running_mode=vision.RunningMode.LIVE_STREAM,
-                                                max_results=max_results, score_threshold=score_threshold,
+                                                max_results=self.max_results, score_threshold=self.score_threshold,
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
@@ -129,7 +144,7 @@ class App:
                 image = cv.flip(frame, 1)
 
                 # Convert the image from BGR to RGB as required by the TFLite model.
-                rgb_image = cv.cvtColor(image, cv2.COLOR_BGR2RGB)
+                rgb_image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
 
                 # Run object detection using the model.
@@ -140,13 +155,13 @@ class App:
                     diver_location = localize(detection_result_list[0])
                     if diver_location is None:
                         diver_location=[0,0]
-                    if (show):
+                    if (self.show):
                         current_frame = visualize(current_frame, detection_result_list[0])
                         detection_frame = current_frame
                         if detection_frame is not None:
                             cv.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
                             cv.namedWindow("object_detection", cv.WINDOW_NORMAL)
-                            cv.resizeWindow("object_detection", width, height)
+                            cv.resizeWindow("object_detection", self.width, self.height)
                             cv.imshow("object_detection", detection_frame)
                     detection_result_list.clear()
                 
@@ -162,26 +177,8 @@ class App:
             if ch == 27:
                 break
 
-def main():
-    import sys
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--cfg', help='path to cfg file', default="config.cfg")
-    config = configparser.ConfigParser()
-
-    # Load the configuration file
-    args = parser.parse_args()
-    config.read(args.cfg)
-    modelPath = config["detector"]["model_path"]
-    camera_idx = config["detector"]["cameraId"]
-    maxResults = config["detector"].getint("maxResults")
-    confThreshold = config["detector"].getfloat("scoreThreshold")
-    frameWidth = config["detector"].getint("frameWidth")
-    frameHeight = config["detector"].getint("frameHeight")
-    show = config["general"].getboolean("show")
-    enable_motor = config["motor"].getboolean('enable')
-
-
-    App().run(modelPath, maxResults, confThreshold, camera_idx, frameWidth, frameHeight, show, enable_motor)
+def main():  
+    App().run()
     print('Done')
 
 
