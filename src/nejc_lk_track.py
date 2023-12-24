@@ -157,9 +157,9 @@ class App:
 
                 if detection_result_list:
                     # print(detection_result_list)
-                    diver_location = localize(detection_result_list[0])
-                    if diver_location is None:
-                        diver_location=[0,0]
+                    diver_location=[0,0]
+                    if diver_location is not None:
+                        diver_location = localize(detection_result_list[0])
                     if (self.show):
                         current_frame = visualize(current_frame, detection_result_list[0])
                         detection_frame = current_frame
