@@ -124,7 +124,7 @@ class App:
             if self.diver_location is not None:
                 img0, img1 = self.prev_gray, frame
                 # p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
-                p0 = np.array([self.diver_location[0], self.diver_location[1]])
+                p0 = np.float32([self.diver_location[0], self.diver_location[1]]).reshape(-1, 1, 2)
                 p1, _st, _err = cv.calcOpticalFlowPyrLK(img0, img1, p0, None, **lk_params)
                 p0r, _st, _err = cv.calcOpticalFlowPyrLK(img1, img0, p1, None, **lk_params)
                 d = abs(p0-p0r).reshape(-1, 2).max(-1)
