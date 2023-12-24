@@ -114,8 +114,8 @@ class App:
         while True:
             # frame = picam2.capture_array()
             _ret, frame = self.cam.read()
-            frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-            vis = frame.copy()
+            # frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+            # vis = frame.copy()
             
             image = cv.flip(frame, 1)
 
@@ -127,7 +127,7 @@ class App:
                         font_size, text_color, font_thickness, cv.LINE_AA)
 
             if len(self.tracks) > 0:
-                img0, img1 = self.prev_gray, frame_gray
+                img0, img1 = self.prev_gray, frame
                 p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
                 p1, _st, _err = cv.calcOpticalFlowPyrLK(img0, img1, p0, None, **lk_params)
                 p0r, _st, _err = cv.calcOpticalFlowPyrLK(img1, img0, p1, None, **lk_params)
@@ -141,7 +141,7 @@ class App:
                     if len(tr) > self.track_len:
                         del tr[0]
                     new_tracks.append(tr)
-                    cv.circle(vis, (int(x), int(y)), 10, (0, 255, 0), -1)
+                    cv.circle(image, (int(x), int(y)), 10, (0, 255, 0), -1)
                 self.tracks = new_tracks
                 print('x',x)
                 print('y',y)
@@ -160,7 +160,7 @@ class App:
                     # print(detection_result_list)
                     diver_location = localize(detection_result_list[0])
                     self.tracks.append([(diver_location[0], diver_location[1])])
-                    cv.circle(vis, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
+                    cv.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
                     if diver_location is None:
                         diver_location=[0,0]
 
@@ -170,8 +170,8 @@ class App:
                         
 
             self.frame_idx += 1
-            self.prev_gray = frame_gray
-            cv.imshow('lk_track', vis)
+            self.prev_gray = frame
+            cv.imshow('lk_track', image)
             #  (self.show):
             #    current_frame = visualize(current_frame, detection_result_list[0])
             #    detection_frame = current_frame
