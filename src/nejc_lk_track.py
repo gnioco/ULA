@@ -89,6 +89,8 @@ class App:
         self.fps = FPS().start()
         self.FPS = 0
 
+        self.diver_location = None
+
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
 
@@ -121,8 +123,8 @@ class App:
 
             if len(self.tracks) > 0:
                 img0, img1 = self.prev_gray, frame
-                p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
-                print(p0)
+                # p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
+                p0 = [(self.diver_location[0], self.diver_location[1])]
                 p1, _st, _err = cv.calcOpticalFlowPyrLK(img0, img1, p0, None, **lk_params)
                 p0r, _st, _err = cv.calcOpticalFlowPyrLK(img1, img0, p1, None, **lk_params)
                 d = abs(p0-p0r).reshape(-1, 2).max(-1)
