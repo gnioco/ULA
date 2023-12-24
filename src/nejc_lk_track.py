@@ -121,7 +121,7 @@ class App:
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
                         font_size, text_color, font_thickness, cv.LINE_AA)
 
-            if len(self.tracks) > 0:
+            if self.diver_location is not None:
                 img0, img1 = self.prev_gray, frame
                 # p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
                 p0 = [(self.diver_location[0], self.diver_location[1])]
