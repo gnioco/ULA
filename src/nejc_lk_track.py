@@ -60,7 +60,10 @@ detection_result_list = []
 class App:
     
     def __init__(self):
-        self.FPS, self.COUNTER, self.START_TIME
+
+        # Global variables to calculate FPS
+        self.COUNTER, self.FPS = 0, 0
+        self.START_TIME = time.time()
 
         parser = argparse.ArgumentParser()
         parser.add_argument('--cfg', help='path to cfg file', default="config.cfg")
@@ -88,9 +91,9 @@ class App:
         
 
         # Calculate the FPS
-        if COUNTER % fps_avg_frame_count == 0:
-            FPS = fps_avg_frame_count / (time.time() - START_TIME)
-            START_TIME = time.time()
+        if self.COUNTER % fps_avg_frame_count == 0:
+            self.FPS = fps_avg_frame_count / (time.time() - self.START_TIME)
+            self.START_TIME = time.time()
 
         detection_result_list.append(result)
         COUNTER += 1
