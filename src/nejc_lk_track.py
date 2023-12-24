@@ -154,7 +154,8 @@ class App:
                                                     centroids, None, **lk_params)
                     good_new = next1[st==1]
                     good_old = centroids[st==1]
-
+                    print("next1")
+                    print(next1)
                     for i, (new, old) in enumerate(zip(good_new, good_old)):
                         # Returns a contiguous flattened array as (x, y) coordinates for new point
                         a, b = new.ravel()
