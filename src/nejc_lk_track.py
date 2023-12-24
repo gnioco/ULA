@@ -143,7 +143,7 @@ class App:
                     detection_result_list.clear()
 
             else: # track an object only if it has been detected
-                print(centroids.sum())
+                print(centroids)
                 if centroids.sum() != 0: # centroid was initialized as zeros
                     print("bbb")
                     next1, st, error = cv.calcOpticalFlowPyrLK(self.prev_frame, frame,
