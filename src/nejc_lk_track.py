@@ -96,7 +96,7 @@ class App:
             self.START_TIME = time.time()
 
         detection_result_list.append(result)
-        COUNTER += 1
+        self.COUNTER += 1
 
     def run(self):
         
