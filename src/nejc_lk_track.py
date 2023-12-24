@@ -170,15 +170,15 @@ class App:
 
             self.frame_idx += 1
             self.prev_gray = frame_gray
-            # cv.imshow('lk_track', vis)
-            if (self.show):
-                current_frame = visualize(current_frame, detection_result_list[0])
-                detection_frame = current_frame
-                if detection_frame is not None:
-                    cv.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
-                    cv.namedWindow("object_detection", cv.WINDOW_NORMAL)
-                    cv.resizeWindow("object_detection", self.frameWidth, self.frameHeight)
-                    cv.imshow("object_detection", detection_frame)
+            cv.imshow('lk_track', vis)
+            #  (self.show):
+            #    current_frame = visualize(current_frame, detection_result_list[0])
+            #    detection_frame = current_frame
+            #    if detection_frame is not None:
+            #        cv.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
+            #        cv.namedWindow("object_detection", cv.WINDOW_NORMAL)
+            #        cv.resizeWindow("object_detection", self.frameWidth, self.frameHeight)
+            #        cv.imshow("object_detection", detection_frame)
 
             # Stop the program if the ESC key is pressed.
             ch = cv.waitKey(1)
