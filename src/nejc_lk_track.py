@@ -85,8 +85,7 @@ class App:
         self.detect_interval = 10
         self.tracks = []
         self.cam = cv.VideoCapture("../ula/test/Test_2.mp4")
-        self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
-        self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, self.frameHeight)
+        
         self.frame_idx = 0
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
@@ -116,6 +115,8 @@ class App:
         while True:
             # frame = picam2.capture_array()
             _ret, frame = self.cam.read()
+            frame.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
+            frame.set(cv.CAP_PROP_FRAME_HEIGHT, self.frameHeight)
             # frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             # vis = frame.copy()
             
