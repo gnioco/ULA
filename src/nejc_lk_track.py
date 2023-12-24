@@ -79,7 +79,7 @@ class App:
         self.enable_motor = config["motor"].getboolean('enable')
 
         self.track_len = 10
-        self.detect_interval = 100
+        self.detect_interval = 10
         self.cam = cv.VideoCapture("../ula/test/Test_2.mp4")
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
         self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, self.frameHeight)
@@ -117,6 +117,7 @@ class App:
             fps_text = 'FPS = {:.1f}'.format(self.FPS)
             text_location = (left_margin, row_size)
             current_frame = frame
+            
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
                         font_size, text_color, font_thickness, cv.LINE_AA)
             
