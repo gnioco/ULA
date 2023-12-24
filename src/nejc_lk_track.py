@@ -78,7 +78,7 @@ class App:
         self.track_len = 10
         self.detect_interval = 5
         self.tracks = []
-        self.cam = cv.VideoCapture("Test_2.mp4")
+        self.cam = cv.VideoCapture("../ula/test/Test_2.mp4")
         self.frame_idx = 0
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
@@ -93,7 +93,7 @@ class App:
         COUNTER += 1
 
     def run(self):
-        print(self.model)
+        
         # Initialize the object detection model
         base_options = python.BaseOptions(model_asset_path=self.model)
         options = vision.ObjectDetectorOptions(base_options=base_options,
