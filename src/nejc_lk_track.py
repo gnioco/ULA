@@ -87,6 +87,7 @@ class App:
         self.frame_idx = 0
 
         self.fps = FPS().start()
+        self.FPS = 0
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
@@ -113,7 +114,7 @@ class App:
             # frame = cv.flip(frame, 1)
 
             # Show the FPS
-            fps_text = 'FPS = {:.1f}'.format(self.fps.fps())
+            fps_text = 'FPS = {:.1f}'.format(self.FPS)
             text_location = (left_margin, row_size)
             current_frame = frame
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
@@ -168,6 +169,7 @@ class App:
                         
             self.fps.update()
             self.fps.stop()
+            self.FPS = self.fps.fps()
             #print("[INFO] approx. FPS: {:.2f}".format(self.fps.fps()))
             self.frame_idx += 1
             self.prev_gray = frame
