@@ -55,9 +55,10 @@ fps_avg_frame_count = 10
 detection_frame = None
 detection_result_list = []
 
-global FPS, COUNTER, START_TIME
+
 
 class App:
+    global FPS, COUNTER, START_TIME
     def __init__(self):
         parser = argparse.ArgumentParser()
         parser.add_argument('--cfg', help='path to cfg file', default="config.cfg")
