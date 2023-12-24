@@ -122,7 +122,7 @@ class App:
             
             # tukaj najdemo tocke ki bi jih radi sledili
             if self.frame_idx % self.detect_interval == 0:
-
+                centroids = np.zeros([1, 1, 2], dtype=np.float32)
                 # Convert the image from BGR to RGB as required by the TFLite model.
                 rgb_image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
