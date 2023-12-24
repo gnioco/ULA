@@ -60,8 +60,8 @@ detection_result_list = []
 class App:
     
     def __init__(self):
-        global FPS, COUNTER, START_TIME
-        
+        self.FPS, self.COUNTER, self.START_TIME
+
         parser = argparse.ArgumentParser()
         parser.add_argument('--cfg', help='path to cfg file', default="config.cfg")
         config = configparser.ConfigParser()
