@@ -160,12 +160,12 @@ class App:
 
                     if len(self.tracks) == 0:
                         self.tracks.append([(diver_location[0], diver_location[1])])
-                    cv.circle(frame, [diver_location[0], diver_location[1]], 5, (255, 0, 0), 5)
+                    
                     
 
                     detection_result_list.clear()
                                 
-                        
+            cv.circle(frame, [diver_location[0], diver_location[1]], 5, (255, 0, 0), 5)            
             self.fps.update()
             self.fps.stop()
             self.FPS = self.fps.fps()
