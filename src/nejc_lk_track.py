@@ -143,7 +143,9 @@ class App:
                     detection_result_list.clear()
 
             else: # track an object only if it has been detected
+                print("aaaa")
                 if centroids.sum() != 0: # centroid was initialized as zeros
+                    print("bbb")
                     next1, st, error = cv.calcOpticalFlowPyrLK(self.prev_frame, frame,
                                                     centroids, None, **lk_params)
                     good_new = next1[st==1]
@@ -154,7 +156,7 @@ class App:
                         a, b = new.ravel()
                         c, d = old.ravel()
                         distance = np.sqrt((a-c)**2 + (b-d)**2)
-                        print(distance)
+                        
                         # distance between new and old points should fall within
                         # specific values for 2 points to be same the object
                         if 0.20 < distance < 20:
