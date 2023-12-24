@@ -69,7 +69,7 @@ class App:
         self.model = config["detector"]["model_path"]
         self.camera_idx = config["detector"]["cameraId"]
         self.maxResults = config["detector"].getint("maxResults")
-        self.score_threshold = config["detector"].getfloat("scoreThreshold")
+        self.scoreThreshold = config["detector"].getfloat("scoreThreshold")
         self.frameWidth = config["detector"].getint("frameWidth")
         self.frameHeight = config["detector"].getint("frameHeight")
         self.show = config["general"].getboolean("show")
@@ -98,7 +98,7 @@ class App:
         base_options = python.BaseOptions(model_asset_path=self.model)
         options = vision.ObjectDetectorOptions(base_options=base_options,
                                                 running_mode=vision.RunningMode.LIVE_STREAM,
-                                                max_results=self.max_results, score_threshold=self.score_threshold,
+                                                maxResults=self.maxResults, scoreThreshold=self.scoreThreshold,
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
