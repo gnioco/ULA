@@ -158,7 +158,7 @@ class App:
                         # distance between new and old points should fall within
                         # specific values for 2 points to be same the object
                         if 20 < distance < 200:
-                            frame = cv.circle(frame, (a, b), 15, (0,0,255), -1)
+                            frame = cv.circle(frame, (int(a), int(b)), 15, (0,0,255), -1)
                     centroids = good_new.reshape(-1, 1, 2)
               
                                 
