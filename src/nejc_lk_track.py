@@ -166,7 +166,7 @@ class App:
                         if detection_frame is not None:
                             cv.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
                             cv.namedWindow("object_detection", cv.WINDOW_NORMAL)
-                            cv.resizeWindow("object_detection", self.width, self.height)
+                            cv.resizeWindow("object_detection", self.frameWidth, self.frameHeight)
                             cv.imshow("object_detection", detection_frame)
                     detection_result_list.clear()
                 
