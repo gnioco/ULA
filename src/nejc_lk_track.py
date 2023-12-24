@@ -81,7 +81,7 @@ class App:
         self.cam = cv.VideoCapture("Test_2.mp4")
         self.frame_idx = 0
 
-    def save_result(result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
+    def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         global FPS, COUNTER, START_TIME
 
         # Calculate the FPS
