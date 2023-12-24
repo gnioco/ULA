@@ -91,7 +91,6 @@ class App:
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
-        self.COUNTER += 1
 
     def run(self):
         
@@ -164,8 +163,7 @@ class App:
                     
 
                     detection_result_list.clear()
-                
-                
+                                
                         
             self.fps.update()
             self.fps.stop()
