@@ -98,7 +98,7 @@ class App:
         base_options = python.BaseOptions(model_asset_path=self.model)
         options = vision.ObjectDetectorOptions(base_options=base_options,
                                                 running_mode=vision.RunningMode.LIVE_STREAM,
-                                                maxResults=self.maxResults, scoreThreshold=self.scoreThreshold,
+                                                max_results=self.maxResults, score_threshold=self.scoreThreshold,
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
