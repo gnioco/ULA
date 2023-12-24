@@ -66,14 +66,14 @@ class App:
         # Load the configuration file
         args = parser.parse_args()
         config.read(args.cfg)
-        modelPath = config["detector"]["model_path"]
-        camera_idx = config["detector"]["cameraId"]
-        maxResults = config["detector"].getint("maxResults")
-        confThreshold = config["detector"].getfloat("scoreThreshold")
-        frameWidth = config["detector"].getint("frameWidth")
-        frameHeight = config["detector"].getint("frameHeight")
-        show = config["general"].getboolean("show")
-        enable_motor = config["motor"].getboolean('enable')
+        self.model = config["detector"]["model_path"]
+        self.camera_idx = config["detector"]["cameraId"]
+        self.maxResults = config["detector"].getint("maxResults")
+        self.score_threshold = config["detector"].getfloat("scoreThreshold")
+        self.frameWidth = config["detector"].getint("frameWidth")
+        self.frameHeight = config["detector"].getint("frameHeight")
+        self.show = config["general"].getboolean("show")
+        self.enable_motor = config["motor"].getboolean('enable')
 
         self.track_len = 10
         self.detect_interval = 5
