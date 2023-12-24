@@ -62,10 +62,6 @@ class App:
     
     def __init__(self):
 
-        # Global variables to calculate FPS
-        self.COUNTER, self.FPS = 0, 0
-        self.START_TIME = time.time()
-
         parser = argparse.ArgumentParser()
         parser.add_argument('--cfg', help='path to cfg file', default="config.cfg")
         config = configparser.ConfigParser()
@@ -93,13 +89,6 @@ class App:
         self.fps = FPS().start()
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
-        
-
-        # Calculate the FPS
-        if self.COUNTER % fps_avg_frame_count == 0:
-            self.FPS = fps_avg_frame_count / (time.time() - self.START_TIME)
-            self.START_TIME = time.time()
-
         detection_result_list.append(result)
         self.COUNTER += 1
 
@@ -124,7 +113,7 @@ class App:
             # frame = cv.flip(frame, 1)
 
             # Show the FPS
-            fps_text = 'FPS = {:.1f}'.format(self.FPS)
+            fps_text = self.fps.fps()
             text_location = (left_margin, row_size)
             current_frame = frame
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
@@ -133,6 +122,7 @@ class App:
             if len(self.tracks) > 0:
                 img0, img1 = self.prev_gray, frame
                 p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
+                print(p0)
                 p1, _st, _err = cv.calcOpticalFlowPyrLK(img0, img1, p0, None, **lk_params)
                 p0r, _st, _err = cv.calcOpticalFlowPyrLK(img1, img0, p1, None, **lk_params)
                 d = abs(p0-p0r).reshape(-1, 2).max(-1)
@@ -178,7 +168,7 @@ class App:
                         
             self.fps.update()
             self.fps.stop()
-            print("[INFO] approx. FPS: {:.2f}".format(self.fps.fps()))
+            #print("[INFO] approx. FPS: {:.2f}".format(self.fps.fps()))
             self.frame_idx += 1
             self.prev_gray = frame
             cv.imshow('lk_track', frame)
