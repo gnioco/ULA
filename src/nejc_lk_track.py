@@ -116,6 +116,7 @@ class App:
             frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             vis = frame.copy()
             
+            image = cv.flip(frame, 1)
 
             # Show the FPS
             fps_text = 'FPS = {:.1f}'.format(self.FPS)
@@ -146,8 +147,6 @@ class App:
                 
             # tukaj najdemo tocke ki bi jih radi sledili
             if self.frame_idx % self.detect_interval == 0:
-
-                image = cv.flip(frame, 1)
 
                 # Convert the image from BGR to RGB as required by the TFLite model.
                 rgb_image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
