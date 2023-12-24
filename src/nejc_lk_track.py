@@ -120,7 +120,7 @@ class App:
             current_frame = frame
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
                         font_size, text_color, font_thickness, cv.LINE_AA)
-
+            print(len(self.tracks))
             if len(self.tracks) > 0:
                 img0, img1 = self.prev_gray, frame
                 p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
@@ -136,7 +136,7 @@ class App:
                     if len(tr) > self.track_len:
                         del tr[0]
                     new_tracks.append(tr)
-                    print("here")
+                    
                     cv.circle(frame, (int(x), int(y)), 10, (0, 255, 0), -1)
                 self.tracks = new_tracks
                 print('x',x)
