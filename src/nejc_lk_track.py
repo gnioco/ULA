@@ -119,7 +119,8 @@ class App:
             current_frame = frame
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
                         font_size, text_color, font_thickness, cv.LINE_AA)
-            
+            print("anaa")
+            print(centroids)
             # tukaj najdemo tocke ki bi jih radi sledili
             if self.frame_idx % int(self.detect_interval)-1 == 0:
                 centroids = np.zeros([1, 1, 2], dtype=np.float32)
