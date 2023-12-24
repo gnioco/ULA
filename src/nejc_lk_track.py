@@ -175,7 +175,7 @@ class App:
 
             self.frame_idx += 1
             self.prev_gray = frame_gray
-            cv.imshow('lk_track', vis)
+            # cv.imshow('lk_track', vis)
 
             # Stop the program if the ESC key is pressed.
             ch = cv.waitKey(1)
