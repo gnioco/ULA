@@ -119,8 +119,7 @@ class App:
             current_frame = frame
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
                         font_size, text_color, font_thickness, cv.LINE_AA)
-            print("anaa")
-            print(centroids)
+            
             # tukaj najdemo tocke ki bi jih radi sledili
             if self.frame_idx % int(self.detect_interval)-1 == 0:
                 centroids = np.zeros([1, 1, 2], dtype=np.float32)
@@ -142,6 +141,8 @@ class App:
                     centroids[0,0,1] = diver_location[1]
                     cv.circle(frame, [diver_location[0], diver_location[1]], 5, (255, 0, 0), 5)
                     detection_result_list.clear()
+                print("anaa")
+                print(centroids)
 
             else: # track an object only if it has been detected
                 
