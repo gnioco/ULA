@@ -26,7 +26,7 @@ TEXT_COLOR = (0, 0, 0)  # black
 
 #Create KalmanFilter object KF
 #KalmanFilter(dt, u_x, u_y, std_acc, x_std_meas, y_std_meas)
-KF = KalmanFilter(0.1, 1, 1, 1, 1, 1)
+KF = KalmanFilter(0.1, 1, 1, 1, 0.1, 0.1)
 
 
 def visualize(image, detection_result) -> np.ndarray:

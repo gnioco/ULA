@@ -34,6 +34,7 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
 from utils import visualize, localize
+from imutils.video import FPS
 
 lk_params = dict( winSize  = (15, 15),
                   maxLevel = 2,
@@ -88,6 +89,8 @@ class App:
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
         self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, self.frameHeight)
         self.frame_idx = 0
+
+        self.fps = FPS().start()
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         
@@ -173,7 +176,9 @@ class App:
                 
                 
                         
-
+            self.fps.update()
+            self.fps.stop()
+            print("[INFO] approx. FPS: {:.2f}".format(self.fps.fps()))
             self.frame_idx += 1
             self.prev_gray = frame
             cv.imshow('lk_track', frame)
