@@ -103,7 +103,7 @@ class App:
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
-        _, self.prev_frame = self.cam.read()
+        _, prev_frame = self.cam.read()
         # Continuously capture images from the camera and run inference
         while True:
             # frame = picam2.capture_array()
@@ -150,7 +150,7 @@ class App:
                 print(centroids)
                 if centroids.sum() != 0: # centroid was initialized as zeros
                     print("bbb")
-                    next1, st, error = cv.calcOpticalFlowPyrLK(self.prev_frame, frame,
+                    next1, st, error = cv.calcOpticalFlowPyrLK(prev_frame, frame,
                                                     centroids, None, **lk_params)
                     good_new = next1[st==1]
                     good_old = centroids[st==1]
@@ -177,7 +177,7 @@ class App:
             self.FPS = self.fps.fps()
             #print("[INFO] approx. FPS: {:.2f}".format(self.fps.fps()))
             self.frame_idx += 1
-            self.prev_frame = frame
+            prev_frame = frame
             cv.imshow('lk_track', frame)
             #  (self.show):
             #    current_frame = visualize(current_frame, detection_result_list[0])
