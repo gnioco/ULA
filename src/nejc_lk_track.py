@@ -153,6 +153,7 @@ class App:
                         # Returns a contiguous flattened array as (x, y) coordinates for new point
                         a, b = new.ravel()
                         c, d = old.ravel()
+                        print(a)
                         distance = np.sqrt((a-c)**2 + (b-d)**2)
                         # distance between new and old points should fall within
                         # specific values for 2 points to be same the object
