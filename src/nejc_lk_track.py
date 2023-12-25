@@ -196,7 +196,7 @@ class App:
                             # if self.isinside(start_point,end_point,(x, y)):
                             self.tracks.append([(x, y)])
                             if self.isinside(start_point,end_point,(x, y)):
-                                cv.circle(frame, (int(x), int(y)), 2, (255, 255, 0), -1)
+                                cv.circle(frame, (int(x), int(y)), 10, (255, 255, 0), -1)
 
 
                     # diver_location = localize(detection_result_list[0])
