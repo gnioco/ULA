@@ -106,11 +106,11 @@ class App:
         # min_tuple = min(BoundingBoxes, key=lambda x: x[1])
         return deepest_box
     
-    def isinside(self, tl, br, p) :
-        print("tl",tl)
-        print("br",br)
+    def isinside(self, bl, tr, p) :
+        print("bl",bl)
+        print("tr",tr)
         print("p",p)
-        if (p[0] > tl[0] and p[0] < br[0] and p[1] < tl[1] and p[1] > br[1]) :
+        if (p[0] > bl[0] and p[0] < tr[0] and p[1] > bl[1] and p[1] < tr[1]) :
             print("inside")
             return True
         else :
