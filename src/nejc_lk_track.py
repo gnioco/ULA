@@ -80,10 +80,11 @@ class App:
 
         self.track_len = 10
         self.detect_interval = 10
+        self.tracks = []
         self.cam = cv.VideoCapture("../ula/test/Test_2.mp4")
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
         self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, self.frameHeight)
-        self.frame_idx = 1
+        self.frame_idx = 0
 
         self.fps = FPS().start()
         self.FPS = 0
@@ -103,7 +104,7 @@ class App:
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
-        _, prev_frame = self.cam.read()
+        
         # Continuously capture images from the camera and run inference
         while True:
             # frame = picam2.capture_array()
@@ -117,13 +118,33 @@ class App:
             fps_text = 'FPS = {:.1f}'.format(self.FPS)
             text_location = (left_margin, row_size)
             current_frame = frame
-            
             cv.putText(current_frame, fps_text, text_location, cv.FONT_HERSHEY_DUPLEX,
                         font_size, text_color, font_thickness, cv.LINE_AA)
             
+            if len(self.tracks) > 0:
+                img0, img1 = self.prev_gray, frame
+                p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
+                p1, _st, _err = cv.calcOpticalFlowPyrLK(img0, img1, p0, None, **lk_params)
+                p0r, _st, _err = cv.calcOpticalFlowPyrLK(img1, img0, p1, None, **lk_params)
+                d = abs(p0-p0r).reshape(-1, 2).max(-1)
+                good = d < 1
+                new_tracks = []
+                for tr, (x, y), good_flag in zip(self.tracks, p1.reshape(-1, 2), good):
+                    if not good_flag:
+                        continue
+                    tr.append((x, y))
+                    if len(tr) > self.track_len:
+                        del tr[0]
+                    new_tracks.append(tr)
+                    
+                    cv.circle(frame, (int(x), int(y)), 10, (0, 255, 0), -1)
+                self.tracks = new_tracks
+                print('x',x)
+                print('y',y)
+                
             # tukaj najdemo tocke ki bi jih radi sledili
-            if self.frame_idx % int(self.detect_interval)-1 == 0:
-                centroids = np.zeros([1, 1, 2], dtype=np.float32)
+            if self.frame_idx % self.detect_interval == 0:
+
                 # Convert the image from BGR to RGB as required by the TFLite model.
                 rgb_image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
                 mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_image)
@@ -137,40 +158,13 @@ class App:
 
                     if diver_location is None:
                         diver_location=[0,0]
-                    
-                    centroids[0,0,0] = diver_location[0]
-                    centroids[0,0,1] = diver_location[1]
-                    cv.circle(frame, [diver_location[0], diver_location[1]], 5, (255, 0, 0), 5)
-                    detection_result_list.clear()
-                print("anaa")
-                print(centroids)
 
-            else: # track an object only if it has been detected
-                print("makku")
-                print(centroids)
-                if centroids.sum() != 0: # centroid was initialized as zeros
-                    print("bbb")
-                    next1, st, error = cv.calcOpticalFlowPyrLK(prev_frame, frame,
-                                                    centroids, None, **lk_params)
-                    good_new = next1[st==1]
-                    good_old = centroids[st==1]
-                    print("good_new")
-                    print(good_new)
-                    for i, (new, old) in enumerate(zip(good_new, good_old)):
-                        # Returns a contiguous flattened array as (x, y) coordinates for new point
-                        a, b = new.ravel()
-                        c, d = old.ravel()
-                        distance = np.sqrt((a-c)**2 + (b-d)**2)
-                        
-                        # distance between new and old points should fall within
-                        # specific values for 2 points to be same the object
-                        if 0.20 < distance < 20:
-                            frame = cv.circle(frame, (int(a), int(b)), 15, (0,0,255), -1)
-                    print(centroids)
-                    centroids = good_new.reshape(-1, 1, 2)
-                    print("later")
-                    print(centroids)
-              
+                    if len(self.tracks) == 0:
+                        self.tracks.append([(diver_location[0], diver_location[1])])
+                        cv.circle(frame, [diver_location[0], diver_location[1]], 5, (255, 0, 0), 5)
+                    
+
+                    detection_result_list.clear()
                                 
                         
             self.fps.update()
@@ -178,7 +172,7 @@ class App:
             self.FPS = self.fps.fps()
             #print("[INFO] approx. FPS: {:.2f}".format(self.fps.fps()))
             self.frame_idx += 1
-            prev_frame = frame
+            self.prev_gray = frame
             cv.imshow('lk_track', frame)
             #  (self.show):
             #    current_frame = visualize(current_frame, detection_result_list[0])
