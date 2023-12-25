@@ -36,7 +36,7 @@ from mediapipe.tasks.python import vision
 from utils import visualize, localize
 from imutils.video import FPS
 
-lk_params = dict( winSize  = (50, 50),
+lk_params = dict( winSize  = (15, 15),
                   maxLevel = 2,
                   criteria = (cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03))
 
@@ -79,7 +79,7 @@ class App:
         self.enable_motor = config["motor"].getboolean('enable')
 
         self.track_len = 10
-        self.detect_interval = 5
+        self.detect_interval = 2
         self.tracks = []
         self.cam = cv.VideoCapture("../ula/test/Test_2.mp4")
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
