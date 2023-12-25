@@ -215,7 +215,7 @@ class App:
             self.FPS = self.fps.fps()
             #print("[INFO] approx. FPS: {:.2f}".format(self.fps.fps()))
             self.frame_idx += 1
-            self.prev_gray = frame
+            self.prev_gray = frame_gray
             cv.imshow('lk_track', frame)
             #  (self.show):
             #    current_frame = visualize(current_frame, detection_result_list[0])
