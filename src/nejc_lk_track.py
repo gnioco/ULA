@@ -110,7 +110,7 @@ class App:
         print("bl",bl)
         print("tr",tr)
         print("p",p)
-        if (p[0] > bl[0] and p[0] < tr[0] and p[1] > bl[1] and p[1] < tr[1]) :
+        if (p[0] > bl[0] and p[1] > bl[1] and p[0] < tr[0] and p[1] < tr[1]) :
             print("inside")
             return True
         else :
