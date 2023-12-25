@@ -198,8 +198,8 @@ class App:
                             a = (diver_box.origin_x, diver_box.origin_y)
                             b = (diver_box.width, diver_box.height)
                             c = (x, y)
-                            if self.isinside(a,b,c):
-                                self.tracks.append([(x, y)])
+                            # if self.isinside(a,b,c):
+                            self.tracks.append([(x, y)])
 
 
                     # diver_location = localize(detection_result_list[0])
