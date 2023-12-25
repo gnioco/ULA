@@ -131,7 +131,7 @@ class App:
         while True:
             # frame = picam2.capture_array()
             _ret, frame = self.cam.read()
-            # frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+            frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             # vis = frame.copy()
             
             # frame = cv.flip(frame, 1)
@@ -144,7 +144,7 @@ class App:
                         font_size, text_color, font_thickness, cv.LINE_AA)
             
             if len(self.tracks) > 0:
-                img0, img1 = self.prev_gray, frame
+                img0, img1 = self.prev_gray, frame_gray
                 p0 = np.float32([tr[-1] for tr in self.tracks]).reshape(-1, 1, 2)
                 p1, _st, _err = cv.calcOpticalFlowPyrLK(img0, img1, p0, None, **lk_params)
                 p0r, _st, _err = cv.calcOpticalFlowPyrLK(img1, img0, p1, None, **lk_params)
