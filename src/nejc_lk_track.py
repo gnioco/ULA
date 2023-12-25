@@ -93,7 +93,15 @@ class App:
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
+    
+    # function to find deepest diver
+    def find_deepest_diver(self, tuple_list)-> tuple:
+        if not self.tuple_list:
+            return None  # Return None for an empty list
 
+        min_tuple = min(tuple_list, key=lambda x: x[1])
+        return min_tuple
+    
     def run(self):
         
         # Initialize the object detection model
@@ -153,8 +161,18 @@ class App:
                 detector.detect_async(mp_image, time.time_ns() // 1_000_000)
 
                 if detection_result_list:
-                    # print(detection_result_list)
-                    diver_location = localize(detection_result_list[0])
+                    diver_boxes_list = []
+                    # add divers centers to the list
+                    for detection in detection_result_list[0].detections:    
+                            if detection.categories[0].category_name == "diver":     
+                                bbox = detection.bounding_box
+                                # diver_C = int(bbox.origin_x + bbox.width/2), int(bbox.origin_y + bbox.height/2)
+                                diver_boxes_list.append(bbox)
+
+                    diver_box = self.find_deepest_diver(diver_boxes_list)
+                    print(diver_box)
+                    # diver_location = localize(detection_result_list[0])
+                    diver_C = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
 
                     if diver_location is None:
                         diver_location=[0,0]
