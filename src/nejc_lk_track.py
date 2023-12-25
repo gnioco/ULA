@@ -109,8 +109,8 @@ class App:
     def isinside(self, topleft, dim, p) :
         a = p[0] > topleft[0]
         b = p[0] < (topleft[0]+dim[0])
-        c = p[1] < topleft[1]
-        d = p[1] < (topleft[1]+dim[1])
+        c = p[1] > topleft[1]
+        d = p[1] > (topleft[1]+dim[1])
         if (a and b and c and d) :
             return True
         else :
@@ -131,7 +131,7 @@ class App:
         while True:
             # frame = picam2.capture_array()
             _ret, frame = self.cam.read()
-            frame = cv.flip(frame, 1)
+            # frame = cv.flip(frame, 1)
             frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             # vis = frame.copy()
             
@@ -199,8 +199,8 @@ class App:
                             a = (diver_box.origin_x, diver_box.origin_y)
                             b = (diver_box.width, diver_box.height)
                             c = (x, y)
-                            # if self.isinside(a,b,c):
-                            self.tracks.append([(x, y)])
+                            if self.isinside(a,b,c):
+                                self.tracks.append([(x, y)])
 
 
                     # diver_location = localize(detection_result_list[0])
