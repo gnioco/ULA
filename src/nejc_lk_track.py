@@ -189,7 +189,7 @@ class App:
                     p = cv.goodFeaturesToTrack(frame_gray, mask = mask, **feature_params)
                     if p is not None:
                         for x, y in np.float32(p).reshape(-1, 2):
-                            if self.isinside((diver_box.origin_x, diver_box.origin_y), (diver_box.width, diver_box.height), (x, y)):
+                            if self.isinside([(diver_box.origin_x, diver_box.origin_y)], [(diver_box.width, diver_box.height)], [(x, y)]):
                                 self.tracks.append([(x, y)])
 
 
