@@ -111,6 +111,7 @@ class App:
         print("br",br)
         print("p",p)
         if (p[0] > tl[0] and p[0] < br[0] and p[1] < tl[1] and p[1] > br[1]) :
+            print("inside")
             return True
         else :
             return False
