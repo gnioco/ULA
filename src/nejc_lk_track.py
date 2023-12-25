@@ -107,7 +107,7 @@ class App:
         return deepest_box
     
     def isinside(topleft, dim, p) :
-        a = p[0] >topleft[0]
+        a = p[0] > topleft[0]
         b = p[0] < (topleft[0]+dim[0])
         c = p[1] < topleft[1]
         d = p[1] < (topleft[1]+dim[1])
@@ -189,9 +189,9 @@ class App:
                     p = cv.goodFeaturesToTrack(frame_gray, mask = mask, **feature_params)
                     if p is not None:
                         for x, y in np.float32(p).reshape(-1, 2):
-                            a = [(diver_box.origin_x, diver_box.origin_y)]
-                            b = [(diver_box.width, diver_box.height)]
-                            c = [(x, y)]
+                            a = (diver_box.origin_x, diver_box.origin_y)
+                            b = (diver_box.width, diver_box.height)
+                            c = (x, y)
                             print(a)
                             print(b)
                             print(c)
