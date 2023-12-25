@@ -183,7 +183,11 @@ class App:
                                 # diver_C = int(bbox.origin_x + bbox.width/2), int(bbox.origin_y + bbox.height/2)
                                 diver_boxes_list.append(bbox)
                     diver_box = self.find_deepest_diver(diver_boxes_list)
-                    
+                    start_point = diver_box.origin_x, diver_box.origin_y
+                    end_point = diver_box.origin_x + diver_box.width, diver_box.origin_y + diver_box.height
+                    # Use the orange color for high visibility.
+                    cv.rectangle(frame, start_point, end_point, (0, 165, 255), 3)
+
                     mask = np.zeros_like(frame_gray)
                     mask[:] = 255
                     p = cv.goodFeaturesToTrack(frame_gray, mask = mask, **feature_params)
