@@ -79,7 +79,7 @@ class App:
         self.enable_motor = config["motor"].getboolean('enable')
 
         self.track_len = 10
-        self.detect_interval = 2
+        self.detect_interval = 10
         self.tracks = []
         self.cam = cv.VideoCapture("../ula/test/Test_2.mp4")
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
@@ -195,6 +195,8 @@ class App:
                         for x, y in np.float32(p).reshape(-1, 2):
                             # if self.isinside(start_point,end_point,(x, y)):
                             self.tracks.append([(x, y)])
+                            if self.isinside(start_point,end_point,(x, y)):
+                                cv.circle(frame, (int(x), int(y)), 2, (255, 255, 0), -1)
 
 
                     # diver_location = localize(detection_result_list[0])
