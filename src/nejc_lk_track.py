@@ -79,7 +79,7 @@ class App:
         self.enable_motor = config["motor"].getboolean('enable')
 
         self.track_len = 10
-        self.detect_interval = 10
+        self.detect_interval = 5
         self.tracks = []
         self.cam = cv.VideoCapture("../ula/test/Test_2.mp4")
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
