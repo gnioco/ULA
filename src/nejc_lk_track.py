@@ -190,6 +190,8 @@ class App:
 
                     mask = np.zeros_like(frame_gray)
                     mask[:] = 255
+                    for x, y in [np.int32(tr[-1]) for tr in self.tracks]:
+                        cv.circle(mask, (x, y), 5, 0, -1)
                     p = cv.goodFeaturesToTrack(frame_gray, mask = mask, **feature_params)
                     if p is not None:
                         for x, y in np.float32(p).reshape(-1, 2):
