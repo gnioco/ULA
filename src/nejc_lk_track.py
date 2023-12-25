@@ -193,8 +193,8 @@ class App:
 
                     if p is not None:
                         for x, y in np.float32(p).reshape(-1, 2):
-                            if self.isinside(start_point,end_point,(x, y)):
-                                self.tracks.append([(x, y)])
+                            # if self.isinside(start_point,end_point,(x, y)):
+                            self.tracks.append([(x, y)])
 
 
                     # diver_location = localize(detection_result_list[0])
