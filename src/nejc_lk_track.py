@@ -95,13 +95,16 @@ class App:
         detection_result_list.append(result)
     
     # function to find deepest diver
-    def find_deepest_diver(self, BoundingBoxes)-> tuple:
-        # for Box in BoundingBoxes:
+    def find_deepest_diver(self, BoundingBoxes):
+        deepest_box = BoundingBoxes[0]
+        for Box in BoundingBoxes:
+            if deepest_box.origin_y > Box.origin_y:
+                deepest_box = Box
 
            # return None  # Return None for an empty list
 
-        min_tuple = min(BoundingBoxes, key=lambda x: x[1])
-        return min_tuple
+        # min_tuple = min(BoundingBoxes, key=lambda x: x[1])
+        return deepest_box
     
     def run(self):
         
