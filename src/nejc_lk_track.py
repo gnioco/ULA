@@ -128,7 +128,7 @@ class App:
             # frame = picam2.capture_array()
             _ret, frame = self.cam.read()
             
-            frame = cv.flip(frame, 1)
+            # frame = cv.flip(frame, 1)
             frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             # vis = frame.copy()
             
