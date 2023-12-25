@@ -109,8 +109,8 @@ class App:
     def isinside(self, topleft, dim, p) :
         a = p[0] > topleft[0]
         b = p[0] < (topleft[0]+dim[0])
-        c = p[1] < topleft[1]
-        d = p[1] > (topleft[1]-dim[1])
+        c = p[1] > topleft[1]
+        d = p[1] < (topleft[1]-dim[1])
         if (a and b and c and d) :
             return True
         else :
