@@ -188,6 +188,7 @@ class App:
                     mask[:] = 255
                     p = cv.goodFeaturesToTrack(frame_gray, mask = mask, **feature_params)
                     if p is not None:
+                        print(p)
                         for x, y in np.float32(p).reshape(-1, 2):
                             a = (diver_box.origin_x, diver_box.origin_y)
                             b = (diver_box.width, diver_box.height)
