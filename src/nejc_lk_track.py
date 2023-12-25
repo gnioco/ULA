@@ -89,7 +89,7 @@ class App:
         self.fps = FPS().start()
         self.FPS = 0
 
-        self.diver_location = None
+        self.diver_center = None
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
@@ -106,6 +106,16 @@ class App:
         # min_tuple = min(BoundingBoxes, key=lambda x: x[1])
         return deepest_box
     
+    def isinside(topleft, dim, p) :
+        a = p[0] >topleft[0]
+        b = p[0] < (topleft[0]+dim[0])
+        c = p[1] < topleft[1]
+        d = p[1] < (topleft[1]+dim[1])
+        if (a and b and c and d) :
+            return True
+        else :
+            return False
+        
     def run(self):
         
         # Initialize the object detection model
@@ -173,16 +183,25 @@ class App:
                                 # diver_C = int(bbox.origin_x + bbox.width/2), int(bbox.origin_y + bbox.height/2)
                                 diver_boxes_list.append(bbox)
                     diver_box = self.find_deepest_diver(diver_boxes_list)
-                    print(diver_box)
-                    # diver_location = localize(detection_result_list[0])
-                    diver_location = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
+                    
+                    mask = np.zeros_like(frame_gray)
+                    mask[:] = 255
+                    p = cv.goodFeaturesToTrack(frame_gray, mask = mask, **feature_params)
+                    if p is not None:
+                        for x, y in np.float32(p).reshape(-1, 2):
+                            if self.isinside((diver_box.origin_x, diver_box.origin_y), (diver_box.width, diver_box.height), (x, y)):
+                                self.tracks.append([(x, y)])
 
-                    if diver_location is None:
-                        diver_location=[0,0]
+
+                    # diver_location = localize(detection_result_list[0])
+                    diver_center = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
+
+                    if diver_center is None:
+                        diver_center=[0,0]
 
                     if len(self.tracks) == 0:
-                        self.tracks.append([(diver_location[0], diver_location[1])])
-                        cv.circle(frame, [diver_location[0], diver_location[1]], 5, (255, 0, 0), 5)
+                        self.tracks.append([(diver_center[0], diver_center[1])])
+                        cv.circle(frame, [diver_center[0], diver_center[1]], 5, (255, 0, 0), 5)
                     
 
                     detection_result_list.clear()
