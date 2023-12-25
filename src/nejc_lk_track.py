@@ -107,6 +107,9 @@ class App:
         return deepest_box
     
     def isinside(self, tl, br, p) :
+        print("tl",tl)
+        print("br",br)
+        print("p",p)
         if (p[0] > tl[0] and p[0] < br[0] and p[1] < tl[1] and p[1] > br[1]) :
             return True
         else :
@@ -155,7 +158,7 @@ class App:
                     if len(tr) > self.track_len:
                         del tr[0]
                     new_tracks.append(tr)
-                    # cv.circle(frame, (int(x), int(y)), 2, (0, 255, 0), -1)
+                    cv.circle(frame, (int(x), int(y)), 2, (0, 255, 0), -1)
                 self.tracks = new_tracks
                 
                 print('x',x)
@@ -195,7 +198,6 @@ class App:
                         for x, y in np.float32(p).reshape(-1, 2):
                             # if self.isinside(start_point,end_point,(x, y)):
                             self.tracks.append([(x, y)])
-                            cv.circle(frame, (int(x), int(y)), 2, (0, 255, 0), -1)
                             if self.isinside(start_point,end_point,(x, y)):
                                 cv.circle(frame, (int(x), int(y)), 10, (255, 255, 0), -1)
 
