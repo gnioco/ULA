@@ -158,9 +158,9 @@ class App:
                     if len(tr) > self.track_len:
                         del tr[0]
                     new_tracks.append(tr)
-                    
-                    cv.circle(frame, (int(x), int(y)), 10, (0, 255, 0), -1)
+                    cv.circle(frame, (int(x), int(y)), 2, (0, 255, 0), -1)
                 self.tracks = new_tracks
+                
                 print('x',x)
                 print('y',y)
                 
@@ -192,9 +192,6 @@ class App:
                             a = (diver_box.origin_x, diver_box.origin_y)
                             b = (diver_box.width, diver_box.height)
                             c = (x, y)
-                            print(a)
-                            print(b)
-                            print(c)
                             if self.isinside(a,b,c):
                                 self.tracks.append([(x, y)])
 
