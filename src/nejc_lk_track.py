@@ -106,12 +106,8 @@ class App:
         # min_tuple = min(BoundingBoxes, key=lambda x: x[1])
         return deepest_box
     
-    def isinside(self, topleft, dim, p) :
-        a = p[0] > topleft[0]
-        b = p[0] < (topleft[0]+dim[0])
-        c = p[1] < topleft[1]
-        d = p[1] > (topleft[1]+dim[1])
-        if (a and b and c and d) :
+    def isinside(self, bl, tr, p) :
+        if (p[0] > bl[0] and p[0] < tr[0] and p[1] > bl[1] and p[1] < tr[1]) :
             return True
         else :
             return False
@@ -195,12 +191,10 @@ class App:
                     for x, y in [np.int32(tr[-1]) for tr in self.tracks]:
                         cv.circle(mask, (x, y), 5, 0, -1)
                     p = cv.goodFeaturesToTrack(frame_gray, mask = mask, **feature_params)
+
                     if p is not None:
                         for x, y in np.float32(p).reshape(-1, 2):
-                            a = (diver_box.origin_x, diver_box.origin_y)
-                            b = (diver_box.width, diver_box.height)
-                            c = (x, y)
-                            if self.isinside(a,b,c):
+                            if self.isinside(start_point,end_point,(x, y)):
                                 self.tracks.append([(x, y)])
 
 
