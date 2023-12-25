@@ -172,11 +172,10 @@ class App:
                                 bbox = detection.bounding_box
                                 # diver_C = int(bbox.origin_x + bbox.width/2), int(bbox.origin_y + bbox.height/2)
                                 diver_boxes_list.append(bbox)
-                    print(diver_boxes_list)
                     diver_box = self.find_deepest_diver(diver_boxes_list)
                     print(diver_box)
                     # diver_location = localize(detection_result_list[0])
-                    diver_C = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
+                    diver_location = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
 
                     if diver_location is None:
                         diver_location=[0,0]
