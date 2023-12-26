@@ -84,7 +84,7 @@ class Tracker:
         self.track_len = 10
         self.detect_interval = 10
         self.tracks = []
-        self.cam = cv.VideoCapture("../ula/test/Masa_55CWT.MP4")
+        self.cam = cv.VideoCapture("../ula/test/GH010454.MP4")
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
         self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, self.frameHeight)
 
