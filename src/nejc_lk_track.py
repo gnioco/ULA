@@ -176,6 +176,8 @@ class App:
                 self.tracks = new_tracks
 
                 center = self.calculate_centroid(self.tracks)
+                cv.circle(frame, (int(center[0]), int(center[1])), 10, (255, 0, 0), -1)
+
 
                 print('x',x)
                 print('y',y)
