@@ -95,7 +95,7 @@ class Tracker:
         self.diver_center = None
         #Create KalmanFilter object KF
         #KalmanFilter(dt, u_x, u_y, std_acc, x_std_meas, y_std_meas)
-        self.KF = KalmanFilter(0.01, 1, 1, 1, 0.1, 0.1)
+        self.KF = KalmanFilter(0.005, 1, 1, 1, 1, 1)
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
