@@ -153,12 +153,13 @@ class Tracker:
                     if not good_flag:
                         continue
                     # check if the points belong to the detected diver
-                    if isinside(start_point,end_point,(x, y)):
-                        tr.append((x, y))
-                        if len(tr) > self.track_len:
-                            del tr[0]
-                        new_tracks.append(tr)                    
-                        # cv.circle(frame, (int(x), int(y)), 2, (255, 0, 0), -1)
+                    if len(diver_boxes_list) > 0:
+                        if isinside(start_point,end_point,(x, y)):
+                            tr.append((x, y))
+                            if len(tr) > self.track_len:
+                                del tr[0]
+                            new_tracks.append(tr)                    
+                            # cv.circle(frame, (int(x), int(y)), 2, (255, 0, 0), -1)
                 self.tracks = new_tracks
 
                 center = calculate_centroid(self.tracks)
