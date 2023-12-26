@@ -215,19 +215,21 @@ class App:
                             # if self.isinside(start_point,end_point,(x, y)):
                             self.tracks.append([(x, y)])
                             cv.circle(frame, (int(x), int(y)), 10, (255, 255, 0), -1)
-                            ##if self.isinside(start_point,end_point,(x, y)):
-                                #cv.circle(frame, (int(x), int(y)), 10, (255, 255, 0), -1)
-
                     # diver_location = localize(detection_result_list[0])
                     diver_center = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
 
                     if diver_center is None:
-                        diver_center=[0,0]
-                    
+                        diver_center=[0,0]                    
 
                     detection_result_list.clear()
                                 
-                        
+            distance = np.sqrt((diver_center[0] - center[0])**2 + (diver_center[1] - center[1])**2)
+            if 20 < distance < 200:   
+                real_center = center
+            else:
+                real_center = diver_center
+            cv.circle(frame, (int(real_center[0]), int(real_center[1])), 8, (0, 0, 255), -1)
+
             self.fps.update()
             self.fps.stop()
             self.FPS = self.fps.fps()
