@@ -150,7 +150,7 @@ class App:
             # vis = frame.copy()
             
             if diver_center is None:
-                        diver_center=[0,0] 
+                        center, diver_center=[0,0] 
 
             # Show the FPS
             fps_text = 'FPS = {:.1f}'.format(self.FPS)
