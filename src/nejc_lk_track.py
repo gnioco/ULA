@@ -152,9 +152,9 @@ class App:
             # frame = picam2.capture_array()
             success, frame = self.cam.read()
             if not success:
-            sys.exit(
-                'ERROR: Unable to read from webcam. Please verify your webcam settings.'
-            )
+                sys.exit(
+                    'ERROR: Unable to read from webcam. Please verify your webcam settings.'
+                )
             
             frame = cv.flip(frame, 1)
             frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
