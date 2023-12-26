@@ -179,8 +179,6 @@ class App:
                 cv.circle(frame, (int(center[0]), int(center[1])), 10, (255, 0, 0), -1)
 
 
-                print('x',x)
-                print('y',y)
                 
             # tukaj najdemo tocke ki bi jih radi sledili
             if self.frame_idx % self.detect_interval == 0:
@@ -220,16 +218,11 @@ class App:
                             ##if self.isinside(start_point,end_point,(x, y)):
                                 #cv.circle(frame, (int(x), int(y)), 10, (255, 255, 0), -1)
 
-                    print(self.tracks)
                     # diver_location = localize(detection_result_list[0])
                     diver_center = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
 
                     if diver_center is None:
                         diver_center=[0,0]
-
-                    if len(self.tracks) == 0:
-                        self.tracks.append([(diver_center[0], diver_center[1])])
-                        cv.circle(frame, [diver_center[0], diver_center[1]], 5, (255, 0, 0), 5)
                     
 
                     detection_result_list.clear()
