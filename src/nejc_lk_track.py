@@ -185,8 +185,7 @@ class Tracker:
                         end_point = diver_box.origin_x + diver_box.width, diver_box.origin_y + diver_box.height
                         diver_center = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
 
-                    # Use the orange color for high visibility.
-                    cv.rectangle(frame, start_point, end_point, (0, 165, 255), 3)
+                    # cv.rectangle(frame, start_point, end_point, (0, 165, 255), 3)
 
                     mask = np.zeros_like(frame_gray)
                     mask[:] = 255
