@@ -148,6 +148,8 @@ class App:
             frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
             # vis = frame.copy()
             
+            if diver_center is None:
+                        diver_center=[0,0] 
 
             # Show the FPS
             fps_text = 'FPS = {:.1f}'.format(self.FPS)
@@ -218,8 +220,7 @@ class App:
                     # diver_location = localize(detection_result_list[0])
                     diver_center = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
 
-                    if diver_center is None:
-                        diver_center=[0,0]                    
+                                     
 
                     detection_result_list.clear()
                                 
