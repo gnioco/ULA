@@ -84,9 +84,10 @@ class Tracker:
         self.track_len = 10
         self.detect_interval = 10
         self.tracks = []
-        self.cam = cv.VideoCapture("../ula/test/Mylena40.m4v")
+        self.cam = cv.VideoCapture("../ula/test/MOV_0002.MP4")
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
         self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, self.frameHeight)
+
         self.frame_idx = 0
 
         self.fps = FPS().start()
@@ -122,6 +123,9 @@ class Tracker:
             success, frame = self.cam.read()
             if not success:
                 break
+            # resize it
+            dim = (self.frameWidth, self.frameHeight)
+            frame = cv.resize(frame, dim, interpolation = cv.INTER_AREA)
             
             frame = cv.flip(frame, 1)
             frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
