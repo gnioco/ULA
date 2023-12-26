@@ -25,6 +25,7 @@ from __future__ import print_function
 
 import numpy as np
 import cv2 as cv
+import sys
 import time
 import argparse
 import configparser
@@ -81,7 +82,7 @@ class App:
         self.enable_motor = config["motor"].getboolean('enable')
 
         self.track_len = 10
-        self.detect_interval = 5
+        self.detect_interval = 10
         self.tracks = []
         self.cam = cv.VideoCapture("../ula/test/Test_2.mp4")
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
@@ -94,7 +95,7 @@ class App:
         self.diver_center = None
         #Create KalmanFilter object KF
         #KalmanFilter(dt, u_x, u_y, std_acc, x_std_meas, y_std_meas)
-        self.KF = KalmanFilter(0.05, 1, 1, 1, 0.1, 0.1)
+        self.KF = KalmanFilter(0.01, 1, 1, 1, 0.1, 0.1)
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
@@ -149,7 +150,11 @@ class App:
         # Continuously capture images from the camera and run inference
         while True:
             # frame = picam2.capture_array()
-            _ret, frame = self.cam.read()
+            success, frame = self.cam.read()
+            if not success:
+            sys.exit(
+                'ERROR: Unable to read from webcam. Please verify your webcam settings.'
+            )
             
             frame = cv.flip(frame, 1)
             frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
