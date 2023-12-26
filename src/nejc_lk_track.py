@@ -106,6 +106,21 @@ class App:
         # min_tuple = min(BoundingBoxes, key=lambda x: x[1])
         return deepest_box
     
+    def calculate_centroid(self,points):
+        n = len(points)
+        
+        # Calculate the sum of x and y coordinates
+        sum_x = sum(point[0] for point in points)
+        sum_y = sum(point[1] for point in points)
+        
+        # Calculate the centroid coordinates
+        centroid_x = sum_x / n
+        centroid_y = sum_y / n
+
+        center = (centroid_x, centroid_y)
+        
+        return center
+
     def isinside(self, bl, tr, p) :
         print("bl",bl)
         print("tr",tr)
@@ -162,7 +177,9 @@ class App:
                     if self.isinside(start_point,end_point,(x, y)):
                         cv.circle(frame, (int(x), int(y)), 2, (255, 0, 0), -1)
                 self.tracks = new_tracks
-                
+
+                center = self.calculate_centroid(self.tracks)
+
                 print('x',x)
                 print('y',y)
                 
