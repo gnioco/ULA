@@ -160,7 +160,7 @@ class App:
                         del tr[0]
                     new_tracks.append(tr)
                     if self.isinside(start_point,end_point,(x, y)):
-                        cv.circle(frame, (int(x), int(y)), 2, (0, 255, 0), -1)
+                        cv.circle(frame, (int(x), int(y)), 2, (255, 0, 0), -1)
                 self.tracks = new_tracks
                 
                 print('x',x)
