@@ -57,14 +57,14 @@ def visualize(image, detection_result) -> np.ndarray:
   return image
 
 
-def isinside(self, bl, tr, p) :
+def isinside(bl, tr, p) :
     if (p[0] > bl[0] and p[1] > bl[1] and p[0] < tr[0] and p[1] < tr[1]) :
         return True
     else :
         return False
         
 # function to find deepest diver
-def find_deepest_diver(self, BoundingBoxes):
+def find_deepest_diver(BoundingBoxes):
     deepest_box = BoundingBoxes[0]
     for Box in BoundingBoxes:
         if deepest_box.origin_y < Box.origin_y:
@@ -75,7 +75,7 @@ def find_deepest_diver(self, BoundingBoxes):
     # min_tuple = min(BoundingBoxes, key=lambda x: x[1])
     return deepest_box
     
-def calculate_centroid(self,points):
+def calculate_centroid(points):
     flattened_points = [point for sublist in points for point in sublist]
     n = len(flattened_points)
     
