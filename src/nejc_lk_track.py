@@ -61,7 +61,7 @@ detection_result_list = []
 
 
 
-class App:
+class Tracker:
     
     def __init__(self):
 
@@ -144,25 +144,22 @@ class App:
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
-        diver_center = None
-        center = None
+        center=[0,0]
+        diver_center=[0,0] 
 
         # Continuously capture images from the camera and run inference
         while True:
             # frame = picam2.capture_array()
             success, frame = self.cam.read()
             if not success:
-                sys.exit(
-                    'ERROR: Unable to read from webcam. Please verify your webcam settings.'
-                )
+                break
             
             frame = cv.flip(frame, 1)
             frame_gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-            # vis = frame.copy()
             
-            if diver_center is None:
-                        center=[0,0]
-                        diver_center=[0,0] 
+            #if diver_center is None:
+            #            center=[0,0]
+            #            diver_center=[0,0] 
 
             # Show the FPS
             fps_text = 'FPS = {:.1f}'.format(self.FPS)
@@ -182,17 +179,17 @@ class App:
                 for tr, (x, y), good_flag in zip(self.tracks, p1.reshape(-1, 2), good):
                     if not good_flag:
                         continue
+                    # check if the points belong to the detected diver
                     if self.isinside(start_point,end_point,(x, y)):
                         tr.append((x, y))
                         if len(tr) > self.track_len:
                             del tr[0]
                         new_tracks.append(tr)                    
-                        cv.circle(frame, (int(x), int(y)), 2, (255, 0, 0), -1)
+                        # cv.circle(frame, (int(x), int(y)), 2, (255, 0, 0), -1)
                 self.tracks = new_tracks
 
                 center = self.calculate_centroid(self.tracks)
                 cv.circle(frame, (int(center[0]), int(center[1])), 10, (255, 0, 0), -1)
-
 
                 
             # tukaj najdemo tocke ki bi jih radi sledili
@@ -264,7 +261,7 @@ class App:
                 break
 
 def main():  
-    App().run()
+    Tracker().run()
     print('Done')
 
 
