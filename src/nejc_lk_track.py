@@ -122,11 +122,7 @@ class App:
         return center
 
     def isinside(self, bl, tr, p) :
-        print("bl",bl)
-        print("tr",tr)
-        print("p",p)
         if (p[0] > bl[0] and p[1] > bl[1] and p[0] < tr[0] and p[1] < tr[1]) :
-            print("inside")
             return True
         else :
             return False
@@ -221,7 +217,7 @@ class App:
                             ##if self.isinside(start_point,end_point,(x, y)):
                                 #cv.circle(frame, (int(x), int(y)), 10, (255, 255, 0), -1)
 
-
+                    print(self.tracks)
                     # diver_location = localize(detection_result_list[0])
                     diver_center = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
 
