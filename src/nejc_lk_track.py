@@ -167,11 +167,11 @@ class App:
                 for tr, (x, y), good_flag in zip(self.tracks, p1.reshape(-1, 2), good):
                     if not good_flag:
                         continue
-                    tr.append((x, y))
-                    if len(tr) > self.track_len:
-                        del tr[0]
-                    new_tracks.append(tr)
                     if self.isinside(start_point,end_point,(x, y)):
+                        tr.append((x, y))
+                        if len(tr) > self.track_len:
+                            del tr[0]
+                        new_tracks.append(tr)                    
                         cv.circle(frame, (int(x), int(y)), 2, (255, 0, 0), -1)
                 self.tracks = new_tracks
 
