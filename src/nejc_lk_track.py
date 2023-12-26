@@ -84,7 +84,7 @@ class Tracker:
         self.track_len = 10
         self.detect_interval = 10
         self.tracks = []
-        self.cam = cv.VideoCapture("../ula/test/MOV_0002.MP4")
+        self.cam = cv.VideoCapture("../ula/test/Masa_55CWT.MP4")
         self.cam.set(cv.CAP_PROP_FRAME_WIDTH, self.frameWidth)
         self.cam.set(cv.CAP_PROP_FRAME_HEIGHT, self.frameHeight)
 
@@ -97,7 +97,7 @@ class Tracker:
 
         #Create KalmanFilter object KF
         #KalmanFilter(dt, u_x, u_y, std_acc, x_std_meas, y_std_meas)
-        self.KF = KalmanFilter(0.005, 1, 1, 1, 1, 1)
+        self.KF = KalmanFilter(0.008, 1, 1, 1, 1, 1)
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
