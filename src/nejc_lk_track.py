@@ -144,8 +144,8 @@ class Tracker:
                                                 result_callback=self.save_result)
         detector = vision.ObjectDetector.create_from_options(options)
 
-        center=[0,0]
-        diver_center=[0,0] 
+        center = None
+        diver_center = None
 
         # Continuously capture images from the camera and run inference
         while True:
@@ -189,7 +189,7 @@ class Tracker:
                 self.tracks = new_tracks
 
                 center = self.calculate_centroid(self.tracks)
-                cv.circle(frame, (int(center[0]), int(center[1])), 10, (255, 0, 0), -1)
+                #cv.circle(frame, (int(center[0]), int(center[1])), 10, (255, 0, 0), -1)
 
                 
             # tukaj najdemo tocke ki bi jih radi sledili
