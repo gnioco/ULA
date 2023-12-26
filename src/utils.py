@@ -76,17 +76,21 @@ def find_deepest_diver(BoundingBoxes):
     return deepest_box
     
 def calculate_centroid(points):
-    flattened_points = [point for sublist in points for point in sublist]
-    n = len(flattened_points)
     
-    # Calculate the sum of x and y coordinates
-    sum_x = sum(point[0] for point in flattened_points)
-    sum_y = sum(point[1] for point in flattened_points)
-    
-    # Calculate the centroid coordinates
-    centroid_x = sum_x / n
-    centroid_y = sum_y / n
+    if len(points) > 0:
+      flattened_points = [point for sublist in points for point in sublist]
+      n = len(flattened_points)
+      
+      # Calculate the sum of x and y coordinates
+      sum_x = sum(point[0] for point in flattened_points)
+      sum_y = sum(point[1] for point in flattened_points)
+      
+      # Calculate the centroid coordinates
+      centroid_x = sum_x / n
+      centroid_y = sum_y / n
 
-    center = (centroid_x, centroid_y)
+      center = (centroid_x, centroid_y)
+    else:
+       center = [0, 0]
     
     return center
