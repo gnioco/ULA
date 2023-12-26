@@ -34,7 +34,7 @@ import mediapipe as mp
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
-from utils import visualize, localize
+from utils import find_deepest_diver, isinside, calculate_centroid
 from imutils.video import FPS
 
 from lib.KalmanFilter import KalmanFilter
@@ -92,7 +92,8 @@ class Tracker:
         self.fps = FPS().start()
         self.FPS = 0
 
-        self.diver_center = None
+        self.real_center = None
+
         #Create KalmanFilter object KF
         #KalmanFilter(dt, u_x, u_y, std_acc, x_std_meas, y_std_meas)
         self.KF = KalmanFilter(0.005, 1, 1, 1, 1, 1)
@@ -100,39 +101,7 @@ class Tracker:
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
     
-    # function to find deepest diver
-    def find_deepest_diver(self, BoundingBoxes):
-        deepest_box = BoundingBoxes[0]
-        for Box in BoundingBoxes:
-            if deepest_box.origin_y < Box.origin_y:
-                deepest_box = Box
-
-           # return None  # Return None for an empty list
-
-        # min_tuple = min(BoundingBoxes, key=lambda x: x[1])
-        return deepest_box
     
-    def calculate_centroid(self,points):
-        flattened_points = [point for sublist in points for point in sublist]
-        n = len(flattened_points)
-        
-        # Calculate the sum of x and y coordinates
-        sum_x = sum(point[0] for point in flattened_points)
-        sum_y = sum(point[1] for point in flattened_points)
-        
-        # Calculate the centroid coordinates
-        centroid_x = sum_x / n
-        centroid_y = sum_y / n
-
-        center = (centroid_x, centroid_y)
-        
-        return center
-
-    def isinside(self, bl, tr, p) :
-        if (p[0] > bl[0] and p[1] > bl[1] and p[0] < tr[0] and p[1] < tr[1]) :
-            return True
-        else :
-            return False
         
     def run(self):
         
@@ -180,7 +149,7 @@ class Tracker:
                     if not good_flag:
                         continue
                     # check if the points belong to the detected diver
-                    if self.isinside(start_point,end_point,(x, y)):
+                    if isinside(start_point,end_point,(x, y)):
                         tr.append((x, y))
                         if len(tr) > self.track_len:
                             del tr[0]
@@ -188,7 +157,7 @@ class Tracker:
                         # cv.circle(frame, (int(x), int(y)), 2, (255, 0, 0), -1)
                 self.tracks = new_tracks
 
-                center = self.calculate_centroid(self.tracks)
+                center = calculate_centroid(self.tracks)
                 #cv.circle(frame, (int(center[0]), int(center[1])), 10, (255, 0, 0), -1)
 
                 
@@ -211,7 +180,7 @@ class Tracker:
                                 # diver_C = int(bbox.origin_x + bbox.width/2), int(bbox.origin_y + bbox.height/2)
                                 diver_boxes_list.append(bbox)
                     if len(diver_boxes_list)>0:
-                        diver_box = self.find_deepest_diver(diver_boxes_list)
+                        diver_box = find_deepest_diver(diver_boxes_list)
                         start_point = diver_box.origin_x, diver_box.origin_y
                         end_point = diver_box.origin_x + diver_box.width, diver_box.origin_y + diver_box.height
                         diver_center = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
@@ -238,18 +207,20 @@ class Tracker:
 
             distance = np.sqrt((diver_center[0] - center[0])**2 + (diver_center[1] - center[1])**2)
             if 20 < distance < 200:   
-                real_center = center
+                self.real_center = center
             else:
-                real_center = diver_center
+                self.real_center = diver_center
             
-            if real_center is not None:
+            if self.real_center is not None:
                 # Predict
                 (x, y) = self.KF.predict()
                 # Update
-                (x1, y1) = self.KF.update(real_center)                    
-                real_center = [int(x1[0,0]), int(x1[0,1])]
-            
-            cv.circle(frame, (int(real_center[0]), int(real_center[1])), 8, (0, 0, 255), -1)
+                (x1, y1) = self.KF.update(self.real_center)                    
+                self.real_center = [int(x1[0,0]), int(x1[0,1])]
+            else:
+                self.real_center = [0, 0]
+
+            cv.circle(frame, (int(self.real_center[0]), int(self.real_center[1])), 8, (0, 0, 255), -1)
 
             self.fps.update()
             self.fps.stop()

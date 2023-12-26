@@ -56,41 +56,37 @@ def visualize(image, detection_result) -> np.ndarray:
 
   return image
 
-def localize(detection_result) -> np.ndarray:
-  
-  """Gets locations of divers on the input image and return it.
-  Args:
-    detection_result: The list of all "Detection" entities.
-  Returns:
-    Array with diver locations.
-  """
-  diver_location_list = []
-  diver_location = [0,0]
-  center = None
 
-  # function to find deepest diver
-  def find_deepest_diver(tuple_list):
-    if not tuple_list:
-        return None  # Return None for an empty list
+def isinside(self, bl, tr, p) :
+    if (p[0] > bl[0] and p[1] > bl[1] and p[0] < tr[0] and p[1] < tr[1]) :
+        return True
+    else :
+        return False
+        
+# function to find deepest diver
+def find_deepest_diver(self, BoundingBoxes):
+    deepest_box = BoundingBoxes[0]
+    for Box in BoundingBoxes:
+        if deepest_box.origin_y < Box.origin_y:
+            deepest_box = Box
 
-    min_tuple = min(tuple_list, key=lambda x: x[1])
-    return min_tuple
-  
-  # add divers centers to the list
-  for detection in detection_result.detections:    
-        if detection.categories[0].category_name == "diver":     
-            bbox = detection.bounding_box
-            # diver_C = int(bbox.origin_x + bbox.width/2), int(bbox.origin_y + bbox.height/2)
-            diver_box_list.append(bbox)
-  
-  # get location of the deepest detected diver
-  diver_location = find_deepest_diver(diver_box_list)
-  
-  if diver_location is not None:
-    # Predict
-    (x, y) = KF.predict()
-    # Update
-    (x1, y1) = KF.update(diver_location)                    
-    diver_location = [int(x1[0,0]), int(x1[0,1])]
+        # return None  # Return None for an empty list
 
-  return diver_location
+    # min_tuple = min(BoundingBoxes, key=lambda x: x[1])
+    return deepest_box
+    
+def calculate_centroid(self,points):
+    flattened_points = [point for sublist in points for point in sublist]
+    n = len(flattened_points)
+    
+    # Calculate the sum of x and y coordinates
+    sum_x = sum(point[0] for point in flattened_points)
+    sum_y = sum(point[1] for point in flattened_points)
+    
+    # Calculate the centroid coordinates
+    centroid_x = sum_x / n
+    centroid_y = sum_y / n
+
+    center = (centroid_x, centroid_y)
+    
+    return center
