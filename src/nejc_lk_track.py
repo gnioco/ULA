@@ -101,6 +101,7 @@ class App:
     
     # function to find deepest diver
     def find_deepest_diver(self, BoundingBoxes):
+        print(BoundingBoxes)
         deepest_box = BoundingBoxes[0]
         for Box in BoundingBoxes:
             if deepest_box.origin_y < Box.origin_y:
