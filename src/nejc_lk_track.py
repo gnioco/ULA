@@ -36,6 +36,8 @@ from mediapipe.tasks.python import vision
 from utils import visualize, localize
 from imutils.video import FPS
 
+from lib.KalmanFilter import KalmanFilter
+
 lk_params = dict( winSize  = (15, 15),
                   maxLevel = 2,
                   criteria = (cv.TERM_CRITERIA_EPS | cv.TERM_CRITERIA_COUNT, 10, 0.03))
@@ -90,6 +92,9 @@ class App:
         self.FPS = 0
 
         self.diver_center = None
+        #Create KalmanFilter object KF
+        #KalmanFilter(dt, u_x, u_y, std_acc, x_std_meas, y_std_meas)
+        self.KF = KalmanFilter(0.1, 1, 1, 1, 0.1, 0.1)
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
@@ -140,6 +145,7 @@ class App:
 
         diver_center = None
         center = None
+
         # Continuously capture images from the camera and run inference
         while True:
             # frame = picam2.capture_array()
@@ -205,6 +211,8 @@ class App:
                     diver_box = self.find_deepest_diver(diver_boxes_list)
                     start_point = diver_box.origin_x, diver_box.origin_y
                     end_point = diver_box.origin_x + diver_box.width, diver_box.origin_y + diver_box.height
+                    diver_center = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
+
                     # Use the orange color for high visibility.
                     cv.rectangle(frame, start_point, end_point, (0, 165, 255), 3)
 
@@ -216,13 +224,9 @@ class App:
 
                     if p is not None:
                         for x, y in np.float32(p).reshape(-1, 2):
-                            # if self.isinside(start_point,end_point,(x, y)):
                             self.tracks.append([(x, y)])
                             cv.circle(frame, (int(x), int(y)), 10, (255, 255, 0), -1)
-                    # diver_location = localize(detection_result_list[0])
-                    diver_center = int(diver_box.origin_x + diver_box.width/2), int(diver_box.origin_y + diver_box.height/2)
-
-                                     
+                                                         
 
                     detection_result_list.clear()
                                 
@@ -231,6 +235,14 @@ class App:
                 real_center = center
             else:
                 real_center = diver_center
+            
+            if real_center is not None:
+                # Predict
+                (x, y) = self.KF.predict()
+                # Update
+                (x1, y1) = self.KF.update(real_center)                    
+                real_center = [int(x1[0,0]), int(x1[0,1])]
+            
             cv.circle(frame, (int(real_center[0]), int(real_center[1])), 8, (0, 0, 255), -1)
 
             self.fps.update()
@@ -240,14 +252,7 @@ class App:
             self.frame_idx += 1
             self.prev_gray = frame_gray
             cv.imshow('lk_track', frame)
-            #  (self.show):
-            #    current_frame = visualize(current_frame, detection_result_list[0])
-            #    detection_frame = current_frame
-            #    if detection_frame is not None:
-            #        cv.circle(image, [diver_location[0], diver_location[1]], 10, (0, 255, 0), 5)
-            #        cv.namedWindow("object_detection", cv.WINDOW_NORMAL)
-            #        cv.resizeWindow("object_detection", self.frameWidth, self.frameHeight)
-            #        cv.imshow("object_detection", detection_frame)
+
 
             # Stop the program if the ESC key is pressed.
             ch = cv.waitKey(1)
