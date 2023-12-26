@@ -94,7 +94,7 @@ class App:
         self.diver_center = None
         #Create KalmanFilter object KF
         #KalmanFilter(dt, u_x, u_y, std_acc, x_std_meas, y_std_meas)
-        self.KF = KalmanFilter(0.1, 1, 1, 1, 0.1, 0.1)
+        self.KF = KalmanFilter(0.05, 1, 1, 1, 0.1, 0.1)
 
     def save_result(self, result: vision.ObjectDetectorResult, unused_output_image: mp.Image, timestamp_ms: int):
         detection_result_list.append(result)
@@ -224,9 +224,7 @@ class App:
 
                     if p is not None:
                         for x, y in np.float32(p).reshape(-1, 2):
-                            self.tracks.append([(x, y)])
-                            cv.circle(frame, (int(x), int(y)), 10, (255, 255, 0), -1)
-                                                         
+                            self.tracks.append([(x, y)])                                                         
 
                     detection_result_list.clear()
                                 
