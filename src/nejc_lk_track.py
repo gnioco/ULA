@@ -230,7 +230,12 @@ class Tracker:
                             self.tracks.append([(x, y)])                                                         
 
                     detection_result_list.clear()
-                                
+
+            if diver_center is None:
+                diver_center = [0, 0] 
+            if center is None:
+                center = [0, 0]  
+
             distance = np.sqrt((diver_center[0] - center[0])**2 + (diver_center[1] - center[1])**2)
             if 20 < distance < 200:   
                 real_center = center
