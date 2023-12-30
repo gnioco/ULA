@@ -49,10 +49,12 @@ class A4988Nema(object):
         self.direction_pin = direction_pin
         self.step_pin = step_pin
 
+        """
         if mode_pins[0] != -1:
             self.mode_pins = mode_pins
         else:
             self.mode_pins = False
+        """
 
         self.stop_motor = False
         # GPIO.setmode(GPIO.BCM)
@@ -98,9 +100,11 @@ class A4988Nema(object):
             print("Error invalid steptype: {}".format(steptype))
             quit()
 
-        if self.mode_pins != False:
+        """
+         if self.mode_pins != False:
             GPIO.output(self.mode_pins, resolution[steptype])
             self.mode_pins  = OutputDevice(self.mode_pins)
+        """
 
     def motor_go(self, clockwise=False, steptype="Full",
                  steps=200, stepdelay=.005, verbose=False, initdelay=.05):
@@ -133,9 +137,11 @@ class A4988Nema(object):
         else:
             self.direction_pin.on()
 
+        """
         if self.mode_pins != False:
             #GPIO.setup(self.mode_pins, GPIO.OUT)
             self.mode_pins  = OutputDevice(self.mode_pins)
+        """
 
         try:
             # dict resolution
@@ -181,9 +187,11 @@ class A4988Nema(object):
             self.step_pin.off()
             # GPIO.output(self.direction_pin, False)
             self.direction_pin.off()
+            """
             if self.mode_pins != False:
                 for pin in self.mode_pins:
                     pin.off()
+            """
 
 
 
