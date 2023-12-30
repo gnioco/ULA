@@ -13,7 +13,7 @@
 
 import time
 
-from RpiMotorLib import RpiMotorLib
+from RpiMotorLib import A4988Nema
 from gpiozero import OutputDevice
 
 
