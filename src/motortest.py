@@ -28,7 +28,7 @@ step = 23 # Step GPIO Pin
 EN_pin = 24 # enable pin (LOW to enable)
 
 # Declare a instance of class pass GPIO pins numbers and the motor type
-mymotortest = RpiMotorLib.A4988Nema(direction, step, (21,21,21), "A4988")
+mymotortest = A4988Nema(direction, step, (21,21,21), "A4988")
 # GPIO.setup(EN_pin,GPIO.OUT) # set enable pin as output
 EN_pin  = OutputDevice(EN_pin)
 
