@@ -77,7 +77,6 @@ my_thread2.start()
 
 
 
-print("Main thread finished")
 
 """
 mymotortest.motor_go(False, # True=Clockwise, False=Counter-Clockwise
@@ -90,8 +89,3 @@ mymotortest.motor_go(False, # True=Clockwise, False=Counter-Clockwise
 # GPIO.cleanup() # clear GPIO allocations after run
 EN_pin.on()
 
-# Wait for the thread to finish
-my_thread.join()
-my_thread2.join()
-# Signal the consumer to exit by putting None in the queue
-shared_queue.put(None)
