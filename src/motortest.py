@@ -43,6 +43,7 @@ EN_pin.off()
 m_speed = 0
 
 def my_function():
+    print (m_speed)
     mymotortest.motor_speed(m_speed, # speed in degree/s
                         False, 
                         .05)
@@ -57,7 +58,7 @@ my_thread.start()
 while True:
     # Get input from the user
     m_speed = input("Desired motor speed: ")
-    
+
     # Stop the program if the ESC key is pressed.
     if cv2.waitKey(1) == 27:
         break
