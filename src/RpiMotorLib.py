@@ -112,7 +112,8 @@ class A4988Nema(object):
         # GPIO.setup(self.direction_pin, GPIO.OUT)
         self.direction_pin  = OutputDevice(self.direction_pin)
         #GPIO.setup(self.step_pin, GPIO.OUT)
-        self.step_pin  = PWMOutputDevice(self.step_pin, frequency=frequency)
+        self.step_pin  = PWMOutputDevice(self.step_pin, True, 0,
+                                           frequency=frequency)
         # GPIO.output(self.direction_pin, clockwise)
         if clockwise:
             self.direction_pin.off()
