@@ -51,9 +51,10 @@ def my_function():
 
 # Create a thread
 my_thread = threading.Thread(target=my_function, name='MyThread')
-
+my_thread.setDaemon(True)
 # Start the thread
 my_thread.start()
+
 
 # Do some other work in the main thread if needed
 while True:
