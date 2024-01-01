@@ -140,7 +140,11 @@ class A4988Nema(object):
             #GPIO.setup(self.mode_pins, GPIO.OUT)
             self.mode_pins  = OutputDevice(self.mode_pins)
         """
-        stepdelay = 0.9/speed
+        if speed is not 0:
+            stepdelay = 0.9/speed
+        else:
+            stepdelay = 100
+
 
 
         try:
