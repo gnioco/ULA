@@ -38,13 +38,14 @@ EN_pin  = OutputDevice(EN_pin)
 #
 # GPIO.output(EN_pin,GPIO.LOW) # pull enable to low to enable motor
 EN_pin.off()
-
+mymotortest.motor_speed(True, 100)
+"""
 mymotortest.motor_go(False, # True=Clockwise, False=Counter-Clockwise
                      "Full" , # Step type (Full,Half,1/4,1/8,1/16,1/32)
                      200, # number of steps
                      0.005, # step delay [sec]
                      True, # True = print verbose output 
                      .05) # initial delay [sec]
-
+"""
 # GPIO.cleanup() # clear GPIO allocations after run
 EN_pin.on()

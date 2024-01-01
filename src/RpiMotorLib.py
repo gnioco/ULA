@@ -105,7 +105,7 @@ class A4988Nema(object):
             GPIO.output(self.mode_pins, resolution[steptype])
             self.mode_pins  = OutputDevice(self.mode_pins)
         """
-    def motor_speed(self,clockwise=False,frequency = 100):
+    def motor_speed(self, clockwise=False,frequency = 100):
 
         self.stop_motor = False
         # setup GPIO
