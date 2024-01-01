@@ -46,9 +46,10 @@ m_speed = 0
 def my_function(queue):
     while True:
         m_speed = queue.get()
+        print(m_speed)
         if m_speed is None:  # Signal to exit the thread
             break
-        print(m_speed)
+        
         mymotortest.motor_speed(m_speed, # speed in degree/s
                         False, 
                         .05)
