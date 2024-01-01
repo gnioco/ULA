@@ -105,7 +105,7 @@ class A4988Nema(object):
             GPIO.output(self.mode_pins, resolution[steptype])
             self.mode_pins  = OutputDevice(self.mode_pins)
         """
-    def motor_speed(self, speed = float(speed=0), verbose=False, initdelay=.05):
+    def motor_speed(self, speed=0, verbose=False, initdelay=.05):
 
         """ motor_go,  moves stepper motor based on 6 inputs
 
@@ -131,6 +131,7 @@ class A4988Nema(object):
         self.step_pin  = OutputDevice(self.step_pin)
         # GPIO.output(self.direction_pin, clockwise)
         print(speed)
+        speed = float(speed)
 
         if speed < 0.0:
             self.direction_pin.off()
