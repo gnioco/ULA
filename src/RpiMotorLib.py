@@ -130,7 +130,6 @@ class A4988Nema(object):
         #GPIO.setup(self.step_pin, GPIO.OUT)
         self.step_pin  = OutputDevice(self.step_pin)
         # GPIO.output(self.direction_pin, clockwise)
-        print(speed)
         speed = float(speed)
 
         if speed < 0.0:

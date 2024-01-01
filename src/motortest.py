@@ -43,9 +43,9 @@ EN_pin.off()
 
 m_speed = 0
 
-def my_function(queue):
+def my_function(shared_queue):
     while True:
-        m_speed = queue.get()
+        m_speed = shared_queue.get()
         print(m_speed)
         if m_speed is None:  # Signal to exit the thread
             break
