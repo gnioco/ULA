@@ -105,20 +105,91 @@ class A4988Nema(object):
             GPIO.output(self.mode_pins, resolution[steptype])
             self.mode_pins  = OutputDevice(self.mode_pins)
         """
-    def motor_speed(self, clockwise=False,frequency = 100):
+    def motor_speed(self, speed=0, verbose=False, initdelay=.05):
 
+        """ motor_go,  moves stepper motor based on 6 inputs
+
+         (1) speed (in degree/s)
+         (2) steptype, type=string , default=Full help= type of drive to
+         step motor 5 options
+            (Full, Half, 1/4, 1/8, 1/16) 1/32 for DRV8825 only 1/64 1/128 for LV8729 only
+         (3) steps, type=int, default=200, help=Number of steps sequence's
+         to execute. Default is one revolution , 200 in Full mode.
+         (4) stepdelay, type=float, default=0.05, help=Time to wait
+         (in seconds) between steps.
+         (5) verbose, type=bool  type=bool default=False
+         help="Write pin actions",
+         (6) initdelay, type=float, default=1mS, help= Intial delay after
+         GPIO pins initialized but before motor is moved.
+
+        """
         self.stop_motor = False
         # setup GPIO
         # GPIO.setup(self.direction_pin, GPIO.OUT)
         self.direction_pin  = OutputDevice(self.direction_pin)
         #GPIO.setup(self.step_pin, GPIO.OUT)
-        self.step_pin  = PWMOutputDevice(self.step_pin, True, 0,
-                                           frequency=frequency)
+        self.step_pin  = OutputDevice(self.step_pin)
         # GPIO.output(self.direction_pin, clockwise)
-        if clockwise:
+        if speed < 0:
             self.direction_pin.off()
         else:
             self.direction_pin.on()
+
+        """
+        if self.mode_pins != False:
+            #GPIO.setup(self.mode_pins, GPIO.OUT)
+            self.mode_pins  = OutputDevice(self.mode_pins)
+        """
+        stepdelay = 0.9/speed
+
+
+        try:
+            # dict resolution
+            time.sleep(initdelay)
+
+            while True:
+                if self.stop_motor:
+                    raise StopMotorInterrupt
+                else:
+                    # GPIO.output(self.step_pin, True)
+                    self.step_pin.on()
+                    time.sleep(stepdelay)
+                    # GPIO.output(self.step_pin, False)
+                    self.step_pin.off()
+                    time.sleep(stepdelay)
+                    
+
+        except KeyboardInterrupt:
+            print("User Keyboard Interrupt : RpiMotorLib:")
+        except StopMotorInterrupt:
+            print("Stop Motor Interrupt : RpiMotorLib: ")
+        except Exception as motor_error:
+            print(sys.exc_info()[0])
+            print(motor_error)
+            print("RpiMotorLib  : Unexpected error:")
+        else:
+            # print report status
+            if verbose:
+                print("\nRpiMotorLib, Motor Run finished, Details:.\n")
+                print("Motor type = {}".format(self.motor_type))
+                print("Clockwise = {}".format(clockwise))
+                print("Step Type = {}".format(steptype))
+                print("Number of steps = {}".format(steps))
+                print("Step Delay = {}".format(stepdelay))
+                print("Intial delay = {}".format(initdelay))
+                print("Size of turn in degrees = {}"
+                      .format(degree_calc(steps, steptype)))
+        finally:
+            # cleanup
+            # GPIO.output(self.step_pin, False)
+            self.step_pin.off()
+            # GPIO.output(self.direction_pin, False)
+            self.direction_pin.off()
+            """
+            if self.mode_pins != False:
+                for pin in self.mode_pins:
+                    pin.off()
+            """
             
     def motor_go(self, clockwise=False, steptype="Full",
                  steps=200, stepdelay=.005, verbose=False, initdelay=.05):
