@@ -47,3 +47,4 @@ mymotortest.motor_go(False, # True=Clockwise, False=Counter-Clockwise
                      .05) # initial delay [sec]
 
 # GPIO.cleanup() # clear GPIO allocations after run
+EN_pin.on()
