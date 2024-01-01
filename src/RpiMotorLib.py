@@ -24,7 +24,7 @@
 import sys
 import time
 
-from gpiozero import OutputDevice
+from gpiozero import OutputDevice, PWMOutputDevice
 
 # ==================== CLASS SECTION ===============================
 
@@ -105,7 +105,20 @@ class A4988Nema(object):
             GPIO.output(self.mode_pins, resolution[steptype])
             self.mode_pins  = OutputDevice(self.mode_pins)
         """
+    def motor_speed(self,clockwise=False,frequency = 100):
 
+        self.stop_motor = False
+        # setup GPIO
+        # GPIO.setup(self.direction_pin, GPIO.OUT)
+        self.direction_pin  = OutputDevice(self.direction_pin)
+        #GPIO.setup(self.step_pin, GPIO.OUT)
+        self.step_pin  = PWMOutputDevice(self.step_pin, frequency=frequency)
+        # GPIO.output(self.direction_pin, clockwise)
+        if clockwise:
+            self.direction_pin.off()
+        else:
+            self.direction_pin.on()
+            
     def motor_go(self, clockwise=False, steptype="Full",
                  steps=200, stepdelay=.005, verbose=False, initdelay=.05):
         """ motor_go,  moves stepper motor based on 6 inputs
