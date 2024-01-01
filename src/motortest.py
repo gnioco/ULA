@@ -54,24 +54,27 @@ def my_function(shared_queue):
                         False, 
                         .05)
 
+def my_function2(shared_queue):
+    # Do some other work in the main thread if needed
+    while True:
+        # Get input from the user
+        m_speed = input("Desired motor speed: ")
+        shared_queue.put(m_speed)
+        # Stop the program if the ESC key is pressed.
+        if cv2.waitKey(1) == 27:
+            break
+
 # Create a shared queue
 shared_queue = Queue()
 
 # Create a thread
 my_thread = threading.Thread(target=my_function, args=(shared_queue,))
+my_thread2 = threading.Thread(target=my_function2, args=(shared_queue,))
 # Start the thread
 my_thread.start()
+my_thread2.start()
 
 
-
-# Do some other work in the main thread if needed
-while True:
-    # Get input from the user
-    m_speed = input("Desired motor speed: ")
-    shared_queue.put(m_speed)
-    # Stop the program if the ESC key is pressed.
-    if cv2.waitKey(1) == 27:
-        break
 
 
 print("Main thread finished")
@@ -89,5 +92,6 @@ EN_pin.on()
 
 # Wait for the thread to finish
 my_thread.join()
+my_thread2.join()
 # Signal the consumer to exit by putting None in the queue
 shared_queue.put(None)
