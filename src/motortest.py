@@ -89,3 +89,11 @@ mymotortest.motor_go(False, # True=Clockwise, False=Counter-Clockwise
 # GPIO.cleanup() # clear GPIO allocations after run
 EN_pin.on()
 
+# Wait for the producer to finish
+my_thread.join()
+
+# Signal the consumer to exit by putting None in the queue
+shared_queue.put(None)
+
+# Wait for the consumer to finish
+my_thread2.join()
