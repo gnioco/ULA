@@ -10,8 +10,9 @@
 #
 #######################################
 #
-
+import threading
 import time
+import cv2
 
 from RpiMotorLib import A4988Nema
 from gpiozero import OutputDevice
@@ -38,9 +39,32 @@ EN_pin  = OutputDevice(EN_pin)
 #
 # GPIO.output(EN_pin,GPIO.LOW) # pull enable to low to enable motor
 EN_pin.off()
-mymotortest.motor_speed(10, # speed in degree/s
+
+m_speed = 0
+
+def my_function():
+    mymotortest.motor_speed(m_speed, # speed in degree/s
                         False, 
                         .05)
+
+# Create a thread
+my_thread = threading.Thread(target=my_function, name='MyThread')
+
+# Start the thread
+my_thread.start()
+
+# Do some other work in the main thread if needed
+while True:
+    # Get input from the user
+    m_speed = input("Desired motor speed: ")
+    
+    # Stop the program if the ESC key is pressed.
+    if cv2.waitKey(1) == 27:
+        break
+
+
+print("Main thread finished")
+
 """
 mymotortest.motor_go(False, # True=Clockwise, False=Counter-Clockwise
                      "Full" , # Step type (Full,Half,1/4,1/8,1/16,1/32)
@@ -51,3 +75,6 @@ mymotortest.motor_go(False, # True=Clockwise, False=Counter-Clockwise
 """
 # GPIO.cleanup() # clear GPIO allocations after run
 EN_pin.on()
+
+# Wait for the thread to finish
+my_thread.join()
