@@ -131,7 +131,7 @@ class A4988Nema(object):
         self.step_pin  = OutputDevice(self.step_pin)
         # GPIO.output(self.direction_pin, clockwise)
         print(speed)
-        if speed < 0:
+        if speed < 0.0:
             self.direction_pin.off()
         else:
             self.direction_pin.on()
