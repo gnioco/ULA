@@ -13,6 +13,7 @@
 import threading
 import time
 import cv2
+from queue import Queue
 
 from RpiMotorLib import A4988Nema
 from gpiozero import OutputDevice
@@ -42,25 +43,31 @@ EN_pin.off()
 
 m_speed = 0
 
-def my_function():
+def my_function(queue):
     while True:
+        m_speed = queue.get()
+        if m_speed is None:  # Signal to exit the thread
+            break
         print (m_speed)
         mymotortest.motor_speed(m_speed, # speed in degree/s
                         False, 
                         .05)
 
+# Create a shared queue
+shared_queue = Queue()
+
 # Create a thread
-my_thread = threading.Thread(target=my_function, name='MyThread')
-my_thread.setDaemon(True)
+my_thread = threading.Thread(target=my_function, args=(shared_queue,))
 # Start the thread
 my_thread.start()
+
 
 
 # Do some other work in the main thread if needed
 while True:
     # Get input from the user
     m_speed = input("Desired motor speed: ")
-
+    shared_queue.put(m_speed)
     # Stop the program if the ESC key is pressed.
     if cv2.waitKey(1) == 27:
         break
@@ -81,3 +88,5 @@ EN_pin.on()
 
 # Wait for the thread to finish
 my_thread.join()
+# Signal the consumer to exit by putting None in the queue
+shared_queue.put(None)
