@@ -43,8 +43,9 @@ EN_pin.off()
 m_speed = 0
 
 def my_function():
-    print (m_speed)
-    mymotortest.motor_speed(m_speed, # speed in degree/s
+    while True:
+        print (m_speed)
+        mymotortest.motor_speed(m_speed, # speed in degree/s
                         False, 
                         .05)
 
