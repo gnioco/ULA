@@ -41,7 +41,7 @@ EN_pin  = OutputDevice(EN_pin)
 # GPIO.output(EN_pin,GPIO.LOW) # pull enable to low to enable motor
 EN_pin.off()
 
-m_speed = 0
+m_speed = 20
 
 def my_function(shared_queue):
     while True:
