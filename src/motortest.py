@@ -25,8 +25,8 @@ from gpiozero import OutputDevice
 ################################
 #
 #define GPIO pins
-direction= 22 # Direction (DIR) GPIO Pin
-step = 23 # Step GPIO Pin
+direction_pin= 22 # Direction (DIR) GPIO Pin
+step_pin = 23 # Step GPIO Pin
 EN_pin = 24 # enable pin (LOW to enable)
 
 
