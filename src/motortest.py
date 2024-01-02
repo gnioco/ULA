@@ -60,15 +60,15 @@ def continuous_loop(shared_data_queue):
                 time.sleep(initdelay)
             else:
                 print(f"current speed: {m_speed}")
-                speed = float(speed)
+                m_speed = float(m_speed)
 
-                if speed < 0.0:
+                if m_speed < 0.0:
                     direction_pin.off()
                 else:
                     direction_pin.on()
 
-                if speed != 0:
-                    stepdelay = 0.9/speed
+                if m_speed != 0:
+                    stepdelay = 0.9/m_speed
                 else:
                     stepdelay = 100
 
