@@ -13,7 +13,7 @@
 import threading
 import time
 import cv2
-from queue import Queue
+import queue
 
 from RpiMotorLib import A4988Nema
 from gpiozero import OutputDevice
@@ -43,34 +43,43 @@ EN_pin.off()
 
 m_speed = 20
 
-def my_function(shared_queue):
+def continuous_loop(shared_data_queue):
     while True:
-        m_speed = shared_queue.get()
-        print(m_speed)
-        
+        # Check if there's new data in the queue
+        if not shared_data_queue.empty():
+            data_from_user = shared_data_queue.get()
+            print(f"Thread received data from user: {data_from_user}")
+
+        # Perform the continuous loop task
         mymotortest.motor_speed(m_speed, # speed in degree/s
                         False, 
                         .05)
+        time.sleep(1)
 
-def my_function2(shared_queue):
-    # Do some other work in the main thread if needed
-    while True:
-        # Get input from the user
-        m_speed = input("Desired motor speed: ")
-        shared_queue.put(m_speed)
-        # Stop the program if the ESC key is pressed.
-        if cv2.waitKey(1) == 27:
-            break
+# Create a shared queue for communication between threads
+shared_data_queue = queue.Queue()
 
-# Create a shared queue
-shared_queue = Queue()
+# Create a thread with the continuous loop function as the target
+my_thread = threading.Thread(target=continuous_loop, args=(shared_data_queue,), name='ContinuousThread')
 
-# Create a thread
-my_thread = threading.Thread(target=my_function, args=(shared_queue,))
-my_thread2 = threading.Thread(target=my_function2, args=(shared_queue,))
 # Start the thread
 my_thread.start()
-my_thread2.start()
+
+
+
+# Main thread handling user input
+while True:
+    m_speed = input("Desired motor speed: (or 'exit' to stop): ")
+
+    if m_speed.lower() == 'exit':
+        # Signal the thread to exit by putting None in the queue
+        shared_data_queue.put(None)
+        break
+
+    # Put user input into the shared queue for the thread
+    shared_data_queue.put(m_speed)
+
+
 
 
 
@@ -89,9 +98,3 @@ EN_pin.on()
 
 # Wait for the producer to finish
 my_thread.join()
-
-# Signal the consumer to exit by putting None in the queue
-shared_queue.put(None)
-
-# Wait for the consumer to finish
-my_thread2.join()
