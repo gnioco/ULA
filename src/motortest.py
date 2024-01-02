@@ -58,7 +58,7 @@ def continuous_loop(shared_data_queue):
         mymotortest.motor_speed(m_speed, # speed in degree/s
                         False, 
                         .05)
-        time.sleep(1)
+        
 
 # Create a shared queue for communication between threads
 shared_data_queue = queue.Queue()
