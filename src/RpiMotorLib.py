@@ -153,16 +153,15 @@ class A4988Nema(object):
             # dict resolution
             time.sleep(initdelay)
 
-            while True:
-                if self.stop_motor:
-                    raise StopMotorInterrupt
-                else:
-                    # GPIO.output(self.step_pin, True)
-                    self.step_pin.on()
-                    time.sleep(stepdelay)
-                    # GPIO.output(self.step_pin, False)
-                    self.step_pin.off()
-                    time.sleep(stepdelay)
+            if self.stop_motor:
+                raise StopMotorInterrupt
+            else:
+                # GPIO.output(self.step_pin, True)
+                self.step_pin.on()
+                time.sleep(stepdelay)
+                # GPIO.output(self.step_pin, False)
+                self.step_pin.off()
+                time.sleep(stepdelay)
                     
 
         except KeyboardInterrupt:
