@@ -47,8 +47,8 @@ def continuous_loop(shared_data_queue):
     while True:
         # Check if there's new data in the queue
         if not shared_data_queue.empty():
-            data_from_user = shared_data_queue.get()
-            print(f"Thread received data from user: {data_from_user}")
+            m_speed = shared_data_queue.get()
+            print(f"Thread received data from user: {m_speed}")
 
         # Perform the continuous loop task
         mymotortest.motor_speed(m_speed, # speed in degree/s
