@@ -25,8 +25,7 @@ from gpiozero import OutputDevice
 ################################
 #
 #define GPIO pins
-direction_pin= 22 # Direction (DIR) GPIO Pin
-step_pin = 23 # Step GPIO Pin
+
 EN_pin = 24 # enable pin (LOW to enable)
 
 
@@ -46,6 +45,8 @@ m_speed = 20
 def continuous_loop(shared_data_queue):
     m_speed = 20
     initdelay=.05
+    direction_pin= 22 # Direction (DIR) GPIO Pin
+    step_pin = 23 # Step GPIO Pin
     direction_pin  = OutputDevice(direction_pin)
     #GPIO.setup(self.step_pin, GPIO.OUT)
     step_pin  = OutputDevice(step_pin)
