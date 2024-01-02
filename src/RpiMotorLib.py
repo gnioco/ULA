@@ -180,6 +180,7 @@ class A4988Nema(object):
             self.step_pin.off()
             # GPIO.output(self.direction_pin, False)
             self.direction_pin.off()
+            print("here")
             """
             if self.mode_pins != False:
                 for pin in self.mode_pins:
