@@ -68,7 +68,7 @@ def continuous_loop(shared_data_queue):
                     direction_pin.on()
 
                 if m_speed != 0:
-                    stepdelay = 0.9/m_speed
+                    stepdelay = abs(0.9/m_speed)
                 else:
                     stepdelay = 100
 
