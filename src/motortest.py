@@ -47,8 +47,6 @@ def my_function(shared_queue):
     while True:
         m_speed = shared_queue.get()
         print(m_speed)
-        if m_speed is None:  # Signal to exit the thread
-            break
         
         mymotortest.motor_speed(m_speed, # speed in degree/s
                         False, 
