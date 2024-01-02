@@ -44,6 +44,8 @@ EN_pin.off()
 m_speed = 20
 
 def continuous_loop(shared_data_queue):
+    m_speed = 20
+
     while True:
         # Check if there's new data in the queue
         if not shared_data_queue.empty():
