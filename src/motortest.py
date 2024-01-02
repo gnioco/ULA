@@ -13,11 +13,11 @@
 import threading
 import time
 import cv2
+import sys
 import queue
 
 from RpiMotorLib import A4988Nema
 from gpiozero import OutputDevice
-
 
 
 ################################
@@ -43,21 +43,48 @@ EN_pin.off()
 
 m_speed = 20
 
+
 def continuous_loop(shared_data_queue):
     m_speed = 20
+    initdelay=.05
+    direction_pin  = OutputDevice(direction_pin)
+    #GPIO.setup(self.step_pin, GPIO.OUT)
+    step_pin  = OutputDevice(step_pin)
+    stop_motor = False
+    try:
+        while True:
+            # Check if there's new data in the queue
+            if not shared_data_queue.empty():
+                m_speed = shared_data_queue.get()
+                print(f"Thread received data from user: {m_speed}")
+                time.sleep(initdelay)
+            else:
+                print(f"current speed: {m_speed}")
+                speed = float(speed)
 
-    while True:
-        # Check if there's new data in the queue
-        if not shared_data_queue.empty():
-            m_speed = shared_data_queue.get()
-            print(f"Thread received data from user: {m_speed}")
-        else:
-            print(f"current speed: {m_speed}")
-            
-        # Perform the continuous loop task
-        mymotortest.motor_speed(m_speed, # speed in degree/s
-                        False, 
-                        .05)
+                if speed < 0.0:
+                    direction_pin.off()
+                else:
+                    direction_pin.on()
+
+                if speed != 0:
+                    stepdelay = 0.9/speed
+                else:
+                    stepdelay = 100
+
+                step_pin.on()
+                time.sleep(stepdelay)
+                # GPIO.output(self.step_pin, False)
+                step_pin.off()
+                time.sleep(stepdelay)
+        
+    finally:
+        # cleanup
+        # GPIO.output(self.step_pin, False)
+        step_pin.off()
+        # GPIO.output(self.direction_pin, False)
+        direction_pin.off()
+
         
 
 # Create a shared queue for communication between threads
