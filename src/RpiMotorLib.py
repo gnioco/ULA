@@ -59,6 +59,12 @@ class A4988Nema(object):
         self.stop_motor = False
         # GPIO.setmode(GPIO.BCM)
         # GPIO.setwarnings(False)
+                # setup GPIO
+        # GPIO.setup(self.direction_pin, GPIO.OUT)
+        self.direction_pin  = OutputDevice(self.direction_pin)
+        #GPIO.setup(self.step_pin, GPIO.OUT)
+        self.step_pin  = OutputDevice(self.step_pin)
+        # GPIO.output(self.direction_pin, clockwise)
 
     def motor_stop(self):
         """ Stop the motor """
@@ -124,12 +130,7 @@ class A4988Nema(object):
 
         """
         self.stop_motor = False
-        # setup GPIO
-        # GPIO.setup(self.direction_pin, GPIO.OUT)
-        self.direction_pin  = OutputDevice(self.direction_pin)
-        #GPIO.setup(self.step_pin, GPIO.OUT)
-        self.step_pin  = OutputDevice(self.step_pin)
-        # GPIO.output(self.direction_pin, clockwise)
+
         speed = float(speed)
 
         if speed < 0.0:
@@ -172,18 +173,7 @@ class A4988Nema(object):
             print(sys.exc_info()[0])
             print(motor_error)
             print("RpiMotorLib  : Unexpected error:")
-        else:
-            # print report status
-            if verbose:
-                print("\nRpiMotorLib, Motor Run finished, Details:.\n")
-                print("Motor type = {}".format(self.motor_type))
-                print("Clockwise = {}".format(clockwise))
-                print("Step Type = {}".format(steptype))
-                print("Number of steps = {}".format(steps))
-                print("Step Delay = {}".format(stepdelay))
-                print("Intial delay = {}".format(initdelay))
-                print("Size of turn in degrees = {}"
-                      .format(degree_calc(steps, steptype)))
+
         finally:
             # cleanup
             # GPIO.output(self.step_pin, False)
