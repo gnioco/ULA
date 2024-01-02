@@ -55,9 +55,9 @@ def continuous_loop(shared_data_queue):
             print(f"current speed: {m_speed}")
             
         # Perform the continuous loop task
-        #mymotortest.motor_speed(m_speed, # speed in degree/s
-        #                False, 
-        #                .05)
+        mymotortest.motor_speed(m_speed, # speed in degree/s
+                        False, 
+                        .05)
         time.sleep(1)
 
 # Create a shared queue for communication between threads
