@@ -13,14 +13,14 @@ from gpiozero import OutputDevice
 
 #define GPIO pins
 
-EN_pin = 24 # enable pin (LOW to enable)
+EN_pin = 23 # enable pin (LOW to enable)
 EN_pin  = OutputDevice(EN_pin)
 EN_pin.off()
 
-direction_pin= 22 # Direction (DIR) GPIO Pin
+direction_pin= 14 # Direction (DIR) GPIO Pin
 direction_pin  = OutputDevice(direction_pin)
 
-step_pin = 23 # Step GPIO Pin
+step_pin = 15 # Step GPIO Pin
 step_pin  = OutputDevice(step_pin)
 
 m_speed = 20
