@@ -49,7 +49,7 @@ def continuous_loop(shared_data_queue):
                     direction_pin.on()
 
                 if abs(m_speed) > degree_value:
-                    EN_pin.on()
+                    EN_pin.off()
                     stepdelay = abs(degree_value/m_speed)
                     step_pin.on()
                     time.sleep(stepdelay)
@@ -57,7 +57,7 @@ def continuous_loop(shared_data_queue):
                     step_pin.off()
                     time.sleep(stepdelay)
                 else:
-                    EN_pin.off()
+                    EN_pin.on()
                     time.sleep(initdelay)
 
                 
@@ -68,7 +68,7 @@ def continuous_loop(shared_data_queue):
         step_pin.off()
         # GPIO.output(self.direction_pin, False)
         direction_pin.off()
-        EN_pin.off()
+        EN_pin.on()
 
         
 
